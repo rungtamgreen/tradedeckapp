@@ -73,6 +73,17 @@ export default function NewQuotePage() {
 
   const { isListening, transcript, startListening, stopListening, error: voiceError, supported } = useVoiceCommand(handleVoiceResult);
 
+  // Auto-start voice when arriving from dashboard Voice Quote button
+  const [autoStarted, setAutoStarted] = useState(false);
+  useEffect(() => {
+    if (autoVoice && supported && !autoStarted && customers.length >= 0) {
+      setAutoStarted(true);
+      // Small delay to let the page render
+      const t = setTimeout(() => startListening(), 500);
+      return () => clearTimeout(t);
+    }
+  }, [autoVoice, supported, autoStarted, startListening]);
+
   const mutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from('quotes').insert({
