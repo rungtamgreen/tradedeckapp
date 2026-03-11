@@ -39,9 +39,14 @@ export default function Dashboard() {
     <AppLayout
       title="Dashboard"
       action={
-        <Button variant="ghost" size="icon" onClick={signOut} className="touch-target">
-          <LogOut className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/security')} className="touch-target">
+            <Shield className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={signOut} className="touch-target">
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6">
