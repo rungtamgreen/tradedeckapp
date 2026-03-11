@@ -12,7 +12,8 @@ import { ArrowLeft, Mic, MicOff, Loader2 } from 'lucide-react';
 import { useVoiceCommand } from '@/hooks/useVoiceCommand';
 
 export default function NewQuotePage() {
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const autoVoice = searchParams.get('voice') === '1';
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ customer_id: '', description: '', price: '' });
