@@ -3,7 +3,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
 import { useAuth } from '@/hooks/useAuth';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Mic } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Mic, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,9 +39,14 @@ export default function Dashboard() {
     <AppLayout
       title="Dashboard"
       action={
-        <Button variant="ghost" size="icon" onClick={signOut} className="touch-target">
-          <LogOut className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/security')} className="touch-target">
+            <Shield className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={signOut} className="touch-target">
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6">
