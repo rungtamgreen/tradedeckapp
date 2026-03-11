@@ -3,7 +3,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
 import { useAuth } from '@/hooks/useAuth';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
