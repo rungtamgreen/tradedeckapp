@@ -14,7 +14,209 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: string
+          description: string
+          due_date: string | null
+          id: string
+          invoice_number: string | null
+          job_id: string | null
+          paid_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          customer_id: string
+          description: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          job_id?: string | null
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          job_id?: string | null
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          materials_cost: number | null
+          materials_notes: string | null
+          price: number
+          quote_id: string | null
+          scheduled_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id: string
+          description: string
+          id?: string
+          materials_cost?: number | null
+          materials_notes?: string | null
+          price: number
+          quote_id?: string | null
+          scheduled_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          materials_cost?: number | null
+          materials_notes?: string | null
+          price?: number
+          quote_id?: string | null
+          scheduled_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          accept_token: string | null
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          price: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accept_token?: string | null
+          created_at?: string
+          customer_id: string
+          description: string
+          id?: string
+          price: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accept_token?: string | null
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          price?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
