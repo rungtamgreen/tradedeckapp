@@ -3,7 +3,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
 import { useAuth } from '@/hooks/useAuth';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -57,7 +57,8 @@ export default function Dashboard() {
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-3">
-            <QuickAction label="New Quote" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/quotes/new')} variant="accent" />
+            <QuickAction label="Voice Quote" icon={<Mic className="h-5 w-5" />} onClick={() => navigate('/quotes/new?voice=1')} variant="accent" />
+            <QuickAction label="New Quote" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/quotes/new')} />
             <QuickAction label="New Customer" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/customers/new')} />
             <QuickAction label="New Job" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/jobs/new')} />
             <QuickAction label="New Invoice" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/invoices/new')} />
