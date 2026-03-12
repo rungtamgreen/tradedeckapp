@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { AppLockProvider, useAppLock } from "@/hooks/useAppLock";
 import { LockScreen } from "@/components/LockScreen";
+import { SubscriptionProvider } from "@/hooks/useSubscription";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import CustomersPage from "./pages/CustomersPage";
@@ -21,6 +22,7 @@ import CustomerDetailPage from "./pages/CustomerDetailPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
 import InstallPage from "./pages/InstallPage";
 import AcceptQuotePage from "./pages/AcceptQuotePage";
+import PricingPage from "./pages/PricingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
