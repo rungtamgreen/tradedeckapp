@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, Wrench, Crown } from 'lucide-react';
 
 const tabs = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/customers', icon: Users, label: 'Customers' },
   { to: '/quotes', icon: FileText, label: 'Quotes' },
   { to: '/jobs', icon: Wrench, label: 'Jobs' },
