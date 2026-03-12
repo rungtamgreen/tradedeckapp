@@ -65,6 +65,8 @@ const App = () => (
               <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
               <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
               <Route path="/install" element={<InstallPage />} />
+              <Route path="/accept-quote" element={<AcceptQuotePage />} />
+              <Route path="*" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLockProvider>
