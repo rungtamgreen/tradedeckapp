@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { plan } = useSubscription();
   const [quoteOpen, setQuoteOpen] = useState(false);
 
   const { data: stats } = useQuery({
