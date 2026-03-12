@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Star,
   ChevronRight,
+  Mic,
+  Quote,
 } from 'lucide-react';
 import mockupDashboard from '@/assets/mockup-dashboard.png';
 import mockupQuote from '@/assets/mockup-quote.png';
