@@ -19,6 +19,7 @@ import NewInvoicePage from "./pages/NewInvoicePage";
 import SecurityPage from "./pages/SecurityPage";
 import CustomerDetailPage from "./pages/CustomerDetailPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
+import InstallPage from "./pages/InstallPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
