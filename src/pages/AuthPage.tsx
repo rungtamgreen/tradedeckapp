@@ -24,7 +24,7 @@ export default function AuthPage() {
       } else {
         await signUp(email, password);
       }
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
     } finally {
