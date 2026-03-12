@@ -24,7 +24,7 @@ export default function Dashboard() {
     if (searchParams.get('checkout') === 'success') {
       refreshSubscription();
       toast.success('Welcome to Pro! 🎉');
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [searchParams]);
 
