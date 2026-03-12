@@ -23,6 +23,7 @@ import QuoteDetailPage from "./pages/QuoteDetailPage";
 import InstallPage from "./pages/InstallPage";
 import AcceptQuotePage from "./pages/AcceptQuotePage";
 import PricingPage from "./pages/PricingPage";
+import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
