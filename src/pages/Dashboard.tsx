@@ -15,8 +15,17 @@ import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { plan } = useSubscription();
+  const { plan, refreshSubscription } = useSubscription();
+  const [searchParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      refreshSubscription();
+      toast.success('Welcome to Pro! 🎉');
+      navigate('/', { replace: true });
+    }
+  }, [searchParams]);
 
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats', user?.id],
