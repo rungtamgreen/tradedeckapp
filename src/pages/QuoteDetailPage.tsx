@@ -88,6 +88,18 @@ export default function QuoteDetailPage() {
     onError: () => toast.error('Failed to decline quote'),
   });
 
+  const sendEmailMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('send-quote-email', {
+        body: { quoteId: id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+    },
+    onSuccess: () => toast.success('Quote emailed to customer!'),
+    onError: (err: any) => toast.error(err.message || 'Failed to send email'),
+  });
+
   if (isLoading) {
     return (
       <AppLayout title="Quote" action={<Button variant="ghost" size="icon" onClick={() => navigate('/quotes')}><ArrowLeft className="h-5 w-5" /></Button>}>
