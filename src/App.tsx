@@ -62,6 +62,7 @@ const App = () => (
           <AppLockProvider>
             <SubscriptionProvider>
               <Routes>
+                <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
                 <Route path="/" element={<HomeRoute />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
