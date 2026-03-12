@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, CheckCircle, XCircle, Clock, Briefcase } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Clock, Briefcase, Send, Loader2 } from 'lucide-react';
 
 export default function QuoteDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -88,6 +88,18 @@ export default function QuoteDetailPage() {
     onError: () => toast.error('Failed to decline quote'),
   });
 
+  const sendEmailMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('send-quote-email', {
+        body: { quoteId: id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+    },
+    onSuccess: () => toast.success('Quote emailed to customer!'),
+    onError: (err: any) => toast.error(err.message || 'Failed to send email'),
+  });
+
   if (isLoading) {
     return (
       <AppLayout title="Quote" action={<Button variant="ghost" size="icon" onClick={() => navigate('/quotes')}><ArrowLeft className="h-5 w-5" /></Button>}>
@@ -131,26 +143,40 @@ export default function QuoteDetailPage() {
       </Card>
 
       {quote.status === 'pending' && (
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="space-y-3 mb-4">
           <Button
             size="lg"
-            className="h-14 text-base"
-            onClick={() => acceptMutation.mutate()}
-            disabled={acceptMutation.isPending}
+            className="w-full h-14 text-base bg-accent text-accent-foreground hover:bg-accent/90"
+            onClick={() => sendEmailMutation.mutate()}
+            disabled={sendEmailMutation.isPending}
           >
-            <CheckCircle className="h-5 w-5 mr-2" />
-            Accept
+            {sendEmailMutation.isPending ? (
+              <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
+            ) : (
+              <><Send className="h-5 w-5 mr-2" /> Send Quote to Customer</>
+            )}
           </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-14 text-base"
-            onClick={() => declineMutation.mutate()}
-            disabled={declineMutation.isPending}
-          >
-            <XCircle className="h-5 w-5 mr-2" />
-            Decline
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              size="lg"
+              className="h-14 text-base"
+              onClick={() => acceptMutation.mutate()}
+              disabled={acceptMutation.isPending}
+            >
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Accept
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-14 text-base"
+              onClick={() => declineMutation.mutate()}
+              disabled={declineMutation.isPending}
+            >
+              <XCircle className="h-5 w-5 mr-2" />
+              Decline
+            </Button>
+          </div>
         </div>
       )}
 

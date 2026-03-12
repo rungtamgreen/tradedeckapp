@@ -20,6 +20,7 @@ import SecurityPage from "./pages/SecurityPage";
 import CustomerDetailPage from "./pages/CustomerDetailPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
 import InstallPage from "./pages/InstallPage";
+import AcceptQuotePage from "./pages/AcceptQuotePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,8 @@ const App = () => (
               <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
               <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
               <Route path="/install" element={<InstallPage />} />
+              <Route path="/accept-quote" element={<AcceptQuotePage />} />
+              <Route path="*" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLockProvider>
