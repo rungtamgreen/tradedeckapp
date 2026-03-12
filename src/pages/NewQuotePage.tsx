@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
+import { PLANS } from '@/lib/plans';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, Mic, MicOff, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mic, MicOff, Loader2, Crown } from 'lucide-react';
 import { useVoiceCommand } from '@/hooks/useVoiceCommand';
 
 export default function NewQuotePage() {
