@@ -15,8 +15,22 @@ import { ArrowLeft, Crown } from 'lucide-react';
 export default function NewCustomerPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { plan } = useSubscription();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: '', phone: '', email: '', address: '' });
+  const limit = PLANS[plan].customers;
+
+  const { data: customerCount = 0 } = useQuery({
+    queryKey: ['customer-count', user?.id],
+    enabled: !!user && limit !== Infinity,
+    queryFn: async () => {
+      const { count, error } = await supabase.from('customers').select('id', { count: 'exact', head: true }).eq('user_id', user!.id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const atLimit = limit !== Infinity && customerCount >= limit;
 
   const mutation = useMutation({
     mutationFn: async () => {
