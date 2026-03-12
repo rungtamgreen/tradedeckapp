@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, CheckCircle, XCircle, Clock, Briefcase } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Clock, Briefcase, Send, Loader2 } from 'lucide-react';
 
 export default function QuoteDetailPage() {
   const { id } = useParams<{ id: string }>();
