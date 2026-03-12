@@ -18,9 +18,28 @@ export default function NewQuotePage() {
   const [searchParams] = useSearchParams();
   const autoVoice = searchParams.get('voice') === '1';
   const { user } = useAuth();
+  const { plan } = useSubscription();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ customer_id: '', description: '', price: '' });
   const [isParsing, setIsParsing] = useState(false);
+  const quotesLimit = PLANS[plan].quotesPerMonth;
+
+  const { data: quotesThisMonth = 0 } = useQuery({
+    queryKey: ['quotes-month-count', user?.id],
+    enabled: !!user && quotesLimit !== Infinity,
+    queryFn: async () => {
+      const start = new Date();
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      const { count, error } = await supabase.from('quotes').select('id', { count: 'exact', head: true })
+        .eq('user_id', user!.id)
+        .gte('created_at', start.toISOString());
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const atQuoteLimit = quotesLimit !== Infinity && quotesThisMonth >= quotesLimit;
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers', user?.id],
