@@ -143,26 +143,40 @@ export default function QuoteDetailPage() {
       </Card>
 
       {quote.status === 'pending' && (
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="space-y-3 mb-4">
           <Button
             size="lg"
-            className="h-14 text-base"
-            onClick={() => acceptMutation.mutate()}
-            disabled={acceptMutation.isPending}
+            className="w-full h-14 text-base bg-accent text-accent-foreground hover:bg-accent/90"
+            onClick={() => sendEmailMutation.mutate()}
+            disabled={sendEmailMutation.isPending}
           >
-            <CheckCircle className="h-5 w-5 mr-2" />
-            Accept
+            {sendEmailMutation.isPending ? (
+              <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
+            ) : (
+              <><Send className="h-5 w-5 mr-2" /> Send Quote to Customer</>
+            )}
           </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-14 text-base"
-            onClick={() => declineMutation.mutate()}
-            disabled={declineMutation.isPending}
-          >
-            <XCircle className="h-5 w-5 mr-2" />
-            Decline
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              size="lg"
+              className="h-14 text-base"
+              onClick={() => acceptMutation.mutate()}
+              disabled={acceptMutation.isPending}
+            >
+              <CheckCircle className="h-5 w-5 mr-2" />
+              Accept
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-14 text-base"
+              onClick={() => declineMutation.mutate()}
+              disabled={declineMutation.isPending}
+            >
+              <XCircle className="h-5 w-5 mr-2" />
+              Decline
+            </Button>
+          </div>
         </div>
       )}
 
