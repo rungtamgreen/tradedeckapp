@@ -2,3 +2,9 @@ project_id = "zmnttrxjyfctzjvhoukh"
 
 [functions.parse-voice-quote]
 verify_jwt = false
+
+[functions.accept-quote]
+verify_jwt = false
+
+[functions.send-quote-email]
+verify_jwt = false
