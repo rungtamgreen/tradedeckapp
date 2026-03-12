@@ -16,7 +16,7 @@ export function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-bottom">
       <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
         {tabs.map(({ to, icon: Icon, label }) => {
-          const isActive = location.pathname === to || (to !== '/' && location.pathname.startsWith(to));
+          const isActive = location.pathname === to || location.pathname.startsWith(to + '/');
           return (
             <NavLink
               key={to}
