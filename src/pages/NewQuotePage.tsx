@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
+import { PLANS } from '@/lib/plans';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, Mic, MicOff, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mic, MicOff, Loader2, Crown } from 'lucide-react';
 import { useVoiceCommand } from '@/hooks/useVoiceCommand';
 
 export default function NewQuotePage() {
@@ -16,9 +18,28 @@ export default function NewQuotePage() {
   const [searchParams] = useSearchParams();
   const autoVoice = searchParams.get('voice') === '1';
   const { user } = useAuth();
+  const { plan } = useSubscription();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ customer_id: '', description: '', price: '' });
   const [isParsing, setIsParsing] = useState(false);
+  const quotesLimit = PLANS[plan].quotesPerMonth;
+
+  const { data: quotesThisMonth = 0 } = useQuery({
+    queryKey: ['quotes-month-count', user?.id],
+    enabled: !!user && quotesLimit !== Infinity,
+    queryFn: async () => {
+      const start = new Date();
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      const { count, error } = await supabase.from('quotes').select('id', { count: 'exact', head: true })
+        .eq('user_id', user!.id)
+        .gte('created_at', start.toISOString());
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const atQuoteLimit = quotesLimit !== Infinity && quotesThisMonth >= quotesLimit;
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers', user?.id],
@@ -113,7 +134,20 @@ export default function NewQuotePage() {
         </Button>
       }
     >
+      {atQuoteLimit ? (
+        <div className="text-center space-y-4 py-8">
+          <Crown className="h-12 w-12 mx-auto text-accent-foreground" />
+          <h2 className="text-lg font-bold">Monthly quote limit reached</h2>
+          <p className="text-sm text-muted-foreground">Free plan allows {quotesLimit} quotes/month. Upgrade to Pro for unlimited.</p>
+          <Button onClick={() => navigate('/pricing')} className="w-full h-12 font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+            ⚡ Upgrade to Pro
+          </Button>
+        </div>
+      ) : (
       <div className="space-y-4">
+        {quotesLimit !== Infinity && (
+          <p className="text-xs text-muted-foreground text-center">{quotesThisMonth} of {quotesLimit} quotes used this month</p>
+        )}
         {/* Voice Input */}
         {supported && (
           <button
@@ -201,6 +235,7 @@ export default function NewQuotePage() {
           </Button>
         </form>
       </div>
+      )}
     </AppLayout>
   );
 }

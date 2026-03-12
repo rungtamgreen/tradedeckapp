@@ -1,19 +1,32 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
 import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { plan, refreshSubscription } = useSubscription();
+  const [searchParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('checkout') === 'success') {
+      refreshSubscription();
+      toast.success('Welcome to Pro! 🎉');
+      navigate('/', { replace: true });
+    }
+  }, [searchParams]);
 
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats', user?.id],
@@ -53,6 +66,18 @@ export default function Dashboard() {
       }
     >
       <div className="space-y-5">
+        {/* Plan Badge */}
+        <button
+          onClick={() => navigate('/pricing')}
+          className="w-full flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 touch-target"
+        >
+          <span className="text-sm text-muted-foreground">Current Plan</span>
+          <Badge className={plan === 'pro' ? 'bg-accent text-accent-foreground' : ''}>
+            {plan === 'pro' && <Crown className="h-3 w-3 mr-1" />}
+            {plan === 'pro' ? 'Pro' : 'Free'}
+          </Badge>
+        </button>
+
         {/* Hero CTA — Create Quote */}
         <button
           onClick={() => setQuoteOpen(true)}

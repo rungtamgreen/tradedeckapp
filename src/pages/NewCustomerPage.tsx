@@ -5,16 +5,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSubscription } from '@/hooks/useSubscription';
+import { PLANS } from '@/lib/plans';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Crown } from 'lucide-react';
 
 export default function NewCustomerPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { plan } = useSubscription();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ name: '', phone: '', email: '', address: '' });
+  const limit = PLANS[plan].customers;
+
+  const { data: customerCount = 0 } = useQuery({
+    queryKey: ['customer-count', user?.id],
+    enabled: !!user && limit !== Infinity,
+    queryFn: async () => {
+      const { count, error } = await supabase.from('customers').select('id', { count: 'exact', head: true }).eq('user_id', user!.id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const atLimit = limit !== Infinity && customerCount >= limit;
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -44,18 +60,32 @@ export default function NewCustomerPage() {
         </Button>
       }
     >
-      <form
-        onSubmit={e => { e.preventDefault(); mutation.mutate(); }}
-        className="space-y-4"
-      >
-        <Input placeholder="Customer name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="h-12 text-base" required />
-        <Input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="h-12 text-base" />
-        <Input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="h-12 text-base" />
-        <Textarea placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="text-base min-h-[80px]" />
-        <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
-          {mutation.isPending ? 'Saving...' : 'Save Customer'}
-        </Button>
-      </form>
+      {atLimit ? (
+        <div className="text-center space-y-4 py-8">
+          <Crown className="h-12 w-12 mx-auto text-accent-foreground" />
+          <h2 className="text-lg font-bold">Customer limit reached</h2>
+          <p className="text-sm text-muted-foreground">Free plan allows up to {limit} customers. Upgrade to Pro for unlimited.</p>
+          <Button onClick={() => navigate('/pricing')} className="w-full h-12 font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+            ⚡ Upgrade to Pro
+          </Button>
+        </div>
+      ) : (
+        <form
+          onSubmit={e => { e.preventDefault(); mutation.mutate(); }}
+          className="space-y-4"
+        >
+          {limit !== Infinity && (
+            <p className="text-xs text-muted-foreground text-center">{customerCount} of {limit} customers used</p>
+          )}
+          <Input placeholder="Customer name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="h-12 text-base" required />
+          <Input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="h-12 text-base" />
+          <Input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="h-12 text-base" />
+          <Textarea placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="text-base min-h-[80px]" />
+          <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
+            {mutation.isPending ? 'Saving...' : 'Save Customer'}
+          </Button>
+        </form>
+      )}
     </AppLayout>
   );
 }
