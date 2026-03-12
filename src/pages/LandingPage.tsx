@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Star,
   ChevronRight,
+  Mic,
+  Quote,
 } from 'lucide-react';
 import mockupDashboard from '@/assets/mockup-dashboard.png';
 import mockupQuote from '@/assets/mockup-quote.png';
@@ -92,65 +94,87 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/5" />
           <div className="absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
           <div className="absolute -left-40 bottom-0 h-[400px] w-[400px] rounded-full bg-accent/5 blur-3xl" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pb-24 sm:pt-24 lg:pb-28 lg:pt-28">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            {/* Left: Text */}
-            <div className="text-center lg:text-left">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-sm">
-                <Star className="h-3.5 w-3.5 text-accent" />
-                Trusted by 1,000+ tradespeople
-              </div>
-              <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem]">
-                Run Your Trade Business{' '}
-                <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Without the Paperwork
-                </span>
-              </h1>
-              <p className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground lg:mx-0 lg:text-xl">
-                Create quotes, track jobs, and send invoices in seconds — all from your phone. Built for plumbers, electricians, builders, and every trade in between.
-              </p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
-                <Link to="/auth">
-                  <Button size="lg" className="h-14 rounded-full px-8 text-base font-bold shadow-lg shadow-primary/25">
-                    Start Free — No Card Needed <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button variant="ghost" size="lg" className="h-14 rounded-full px-8 text-base font-semibold text-muted-foreground">
-                    Log In <ChevronRight className="ml-1 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
+        <div className="mx-auto max-w-6xl px-6 pb-16 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-sm">
+              <Star className="h-3.5 w-3.5 text-accent" />
+              Built for plumbers, electricians, builders &amp; more
             </div>
 
-            {/* Right: Phone mockup */}
-            <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
-              <div className="relative z-10 overflow-hidden rounded-[2rem] border-[6px] border-foreground/10 bg-card shadow-2xl shadow-primary/10">
-                <img
-                  src={mockupDashboard}
-                  alt="JobDeck dashboard showing active jobs, revenue, and pending quotes"
-                  className="h-auto w-full"
-                  loading="eager"
-                />
-              </div>
-              {/* Floating accent card */}
-              <div className="absolute -left-6 bottom-20 z-20 rounded-xl border border-border bg-card p-3 shadow-xl sm:-left-10">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
+            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.75rem]">
+              Quotes, Jobs &amp; Invoices —{' '}
+              <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Without the Paperwork
+              </span>
+            </h1>
+
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              JobDeck helps tradespeople create quotes, track jobs, and send invoices in seconds from their phone.
+            </p>
+
+            <div className="mx-auto mt-4 flex items-center justify-center gap-2 text-sm font-medium text-foreground/70">
+              <Mic className="h-4 w-4 text-primary" />
+              Even create quotes using voice while you're on the job.
+            </div>
+
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Link to="/auth">
+                <Button size="lg" className="h-14 rounded-full px-8 text-base font-bold shadow-lg shadow-primary/25">
+                  Start Free <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button variant="outline" size="lg" className="h-14 rounded-full px-8 text-base font-semibold">
+                  Log In <ChevronRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Voice example block */}
+          <div className="mx-auto mt-14 max-w-xl">
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
+              <div className="border-b border-border bg-muted/40 px-6 py-5">
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <Mic className="h-4 w-4 text-primary" />
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold text-foreground">Quote Accepted!</p>
-                    <p className="text-[11px] text-muted-foreground">Kitchen fitting — £2,400</p>
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">You say</span>
+                </div>
+                <p className="text-lg font-semibold italic text-foreground sm:text-xl">
+                  "Quote for Sarah, replace radiator, £220"
+                </p>
+              </div>
+              <div className="px-6 py-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <Zap className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">JobDeck creates</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Customer</span>
+                    <span className="font-semibold">Sarah</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Job</span>
+                    <span className="font-semibold">Replace radiator</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Price</span>
+                    <span className="text-lg font-bold text-primary">£220</span>
                   </div>
                 </div>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Quote ready to send — no typing needed.
+                </p>
               </div>
             </div>
           </div>
