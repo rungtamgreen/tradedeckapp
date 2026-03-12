@@ -143,8 +143,8 @@ export default function LandingPage() {
               {/* Floating accent card */}
               <div className="absolute -left-6 bottom-20 z-20 rounded-xl border border-border bg-card p-3 shadow-xl sm:-left-10">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-foreground">Quote Accepted!</p>
