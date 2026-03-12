@@ -52,25 +52,27 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <AppLockProvider>
-            <Routes>
-              <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
-              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
-              <Route path="/customers/new" element={<ProtectedRoute><NewCustomerPage /></ProtectedRoute>} />
-              <Route path="/customers/:id" element={<ProtectedRoute><CustomerDetailPage /></ProtectedRoute>} />
-              <Route path="/quotes" element={<ProtectedRoute><QuotesPage /></ProtectedRoute>} />
-              <Route path="/quotes/:id" element={<ProtectedRoute><QuoteDetailPage /></ProtectedRoute>} />
-              <Route path="/quotes/new" element={<ProtectedRoute><NewQuotePage /></ProtectedRoute>} />
-              <Route path="/jobs" element={<ProtectedRoute><JobsPage /></ProtectedRoute>} />
-              <Route path="/jobs/new" element={<ProtectedRoute><NewJobPage /></ProtectedRoute>} />
-              <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
-              <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
-              <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
-              <Route path="/install" element={<InstallPage />} />
-              <Route path="/accept-quote" element={<AcceptQuotePage />} />
-              <Route path="*" element={<NotFound />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <SubscriptionProvider>
+              <Routes>
+                <Route path="/auth" element={<AuthRoute><AuthPage /></AuthRoute>} />
+                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/customers" element={<ProtectedRoute><CustomersPage /></ProtectedRoute>} />
+                <Route path="/customers/new" element={<ProtectedRoute><NewCustomerPage /></ProtectedRoute>} />
+                <Route path="/customers/:id" element={<ProtectedRoute><CustomerDetailPage /></ProtectedRoute>} />
+                <Route path="/quotes" element={<ProtectedRoute><QuotesPage /></ProtectedRoute>} />
+                <Route path="/quotes/:id" element={<ProtectedRoute><QuoteDetailPage /></ProtectedRoute>} />
+                <Route path="/quotes/new" element={<ProtectedRoute><NewQuotePage /></ProtectedRoute>} />
+                <Route path="/jobs" element={<ProtectedRoute><JobsPage /></ProtectedRoute>} />
+                <Route path="/jobs/new" element={<ProtectedRoute><NewJobPage /></ProtectedRoute>} />
+                <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
+                <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
+                <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
+                <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+                <Route path="/install" element={<InstallPage />} />
+                <Route path="/accept-quote" element={<AcceptQuotePage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </SubscriptionProvider>
           </AppLockProvider>
         </AuthProvider>
       </BrowserRouter>

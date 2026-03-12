@@ -60,18 +60,32 @@ export default function NewCustomerPage() {
         </Button>
       }
     >
-      <form
-        onSubmit={e => { e.preventDefault(); mutation.mutate(); }}
-        className="space-y-4"
-      >
-        <Input placeholder="Customer name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="h-12 text-base" required />
-        <Input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="h-12 text-base" />
-        <Input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="h-12 text-base" />
-        <Textarea placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="text-base min-h-[80px]" />
-        <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
-          {mutation.isPending ? 'Saving...' : 'Save Customer'}
-        </Button>
-      </form>
+      {atLimit ? (
+        <div className="text-center space-y-4 py-8">
+          <Crown className="h-12 w-12 mx-auto text-accent-foreground" />
+          <h2 className="text-lg font-bold">Customer limit reached</h2>
+          <p className="text-sm text-muted-foreground">Free plan allows up to {limit} customers. Upgrade to Pro for unlimited.</p>
+          <Button onClick={() => navigate('/pricing')} className="w-full h-12 font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+            ⚡ Upgrade to Pro
+          </Button>
+        </div>
+      ) : (
+        <form
+          onSubmit={e => { e.preventDefault(); mutation.mutate(); }}
+          className="space-y-4"
+        >
+          {limit !== Infinity && (
+            <p className="text-xs text-muted-foreground text-center">{customerCount} of {limit} customers used</p>
+          )}
+          <Input placeholder="Customer name *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="h-12 text-base" required />
+          <Input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="h-12 text-base" />
+          <Input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="h-12 text-base" />
+          <Textarea placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="text-base min-h-[80px]" />
+          <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
+            {mutation.isPending ? 'Saving...' : 'Save Customer'}
+          </Button>
+        </form>
+      )}
     </AppLayout>
   );
 }

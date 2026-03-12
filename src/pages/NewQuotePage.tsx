@@ -235,6 +235,7 @@ export default function NewQuotePage() {
           </Button>
         </form>
       </div>
+      )}
     </AppLayout>
   );
 }
