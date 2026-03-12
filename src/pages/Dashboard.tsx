@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
+import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Mic, Shield } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats', user?.id],
@@ -49,7 +52,16 @@ export default function Dashboard() {
         </div>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
+        {/* Hero CTA — Create Quote */}
+        <button
+          onClick={() => setQuoteOpen(true)}
+          className="w-full h-20 rounded-2xl bg-accent text-accent-foreground font-bold text-xl flex items-center justify-center gap-3 active:scale-[0.97] transition-transform shadow-lg touch-target"
+        >
+          <FileText className="h-7 w-7" />
+          Create Quote
+        </button>
+
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatCard label="Jobs Today" value={stats?.jobsToday ?? 0} icon={<Wrench className="h-5 w-5" />} color="primary" />
@@ -61,15 +73,15 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <QuickAction label="Voice Quote" icon={<Mic className="h-5 w-5" />} onClick={() => navigate('/quotes/new?voice=1')} variant="accent" />
-            <QuickAction label="New Quote" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/quotes/new')} />
-            <QuickAction label="New Customer" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/customers/new')} />
-            <QuickAction label="New Job" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/jobs/new')} />
-            <QuickAction label="New Invoice" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/invoices/new')} />
+          <div className="grid grid-cols-3 gap-3">
+            <QuickAction label="New Job" icon={<Wrench className="h-5 w-5" />} onClick={() => navigate('/jobs/new')} />
+            <QuickAction label="Invoice" icon={<Receipt className="h-5 w-5" />} onClick={() => navigate('/invoices/new')} />
+            <QuickAction label="Customer" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/customers/new')} />
           </div>
         </div>
       </div>
+
+      <QuickQuoteSheet open={quoteOpen} onOpenChange={setQuoteOpen} />
     </AppLayout>
   );
 }
