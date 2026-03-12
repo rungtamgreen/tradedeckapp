@@ -134,7 +134,20 @@ export default function NewQuotePage() {
         </Button>
       }
     >
+      {atQuoteLimit ? (
+        <div className="text-center space-y-4 py-8">
+          <Crown className="h-12 w-12 mx-auto text-accent-foreground" />
+          <h2 className="text-lg font-bold">Monthly quote limit reached</h2>
+          <p className="text-sm text-muted-foreground">Free plan allows {quotesLimit} quotes/month. Upgrade to Pro for unlimited.</p>
+          <Button onClick={() => navigate('/pricing')} className="w-full h-12 font-bold bg-accent text-accent-foreground hover:bg-accent/90">
+            ⚡ Upgrade to Pro
+          </Button>
+        </div>
+      ) : (
       <div className="space-y-4">
+        {quotesLimit !== Infinity && (
+          <p className="text-xs text-muted-foreground text-center">{quotesThisMonth} of {quotesLimit} quotes used this month</p>
+        )}
         {/* Voice Input */}
         {supported && (
           <button
