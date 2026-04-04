@@ -6,7 +6,7 @@ import { QuickAction } from '@/components/QuickAction';
 import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
