@@ -43,7 +43,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
       // Lock the app if a lock method is set and app was just opened/resumed
       if (method !== 'none') {
-        const lastUnlock = sessionStorage.getItem('tradeflow_unlocked');
+        const lastUnlock = sessionStorage.getItem('jobdeck_unlocked');
         if (!lastUnlock) {
           setIsLocked(true);
         }
