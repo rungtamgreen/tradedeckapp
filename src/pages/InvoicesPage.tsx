@@ -18,7 +18,7 @@ export default function InvoicesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('invoices')
-        .select('*, customers(name)')
+        .select('*, customers(name, email)')
         .eq('user_id', user!.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
