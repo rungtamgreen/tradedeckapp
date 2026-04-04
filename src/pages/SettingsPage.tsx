@@ -33,6 +33,7 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
+  const { plan } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
