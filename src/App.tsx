@@ -20,6 +20,7 @@ import InvoicesPage from "./pages/InvoicesPage";
 import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import NewInvoicePage from "./pages/NewInvoicePage";
 import SecurityPage from "./pages/SecurityPage";
+import SettingsPage from "./pages/SettingsPage";
 import CustomerDetailPage from "./pages/CustomerDetailPage";
 import QuoteDetailPage from "./pages/QuoteDetailPage";
 import InstallPage from "./pages/InstallPage";
