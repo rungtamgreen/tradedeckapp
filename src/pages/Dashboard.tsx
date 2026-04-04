@@ -92,7 +92,7 @@ export default function Dashboard() {
           <StatCard label="Jobs Today" value={stats?.jobsToday ?? 0} icon={<Wrench className="h-5 w-5" />} color="primary" />
           <StatCard label="Unpaid Invoices" value={stats?.unpaidInvoices ?? 0} icon={<Receipt className="h-5 w-5" />} color="destructive" />
           <StatCard label="Quotes Awaiting" value={stats?.pendingQuotes ?? 0} icon={<Clock className="h-5 w-5" />} color="accent" />
-          <StatCard label="Quotes Sent" value={stats?.pendingQuotes ?? 0} icon={<FileText className="h-5 w-5" />} color="success" />
+          <StatCard label="Active Jobs" value={stats?.activeJobs ?? 0} icon={<Wrench className="h-5 w-5" />} color="success" />
         </div>
 
         {/* Quick Actions */}
