@@ -193,6 +193,7 @@ export type Database = {
           invoice_number: string | null
           job_id: string | null
           paid_at: string | null
+          sent: boolean
           status: string
           updated_at: string
           user_id: string
@@ -208,6 +209,7 @@ export type Database = {
           invoice_number?: string | null
           job_id?: string | null
           paid_at?: string | null
+          sent?: boolean
           status?: string
           updated_at?: string
           user_id: string
@@ -223,6 +225,7 @@ export type Database = {
           invoice_number?: string | null
           job_id?: string | null
           paid_at?: string | null
+          sent?: boolean
           status?: string
           updated_at?: string
           user_id?: string
