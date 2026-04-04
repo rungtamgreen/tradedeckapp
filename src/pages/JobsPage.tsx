@@ -120,7 +120,7 @@ export default function JobsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 ml-2">
-                  <span className="text-sm font-bold text-foreground">£{Number(j.price).toFixed(0)}</span>
+                  <span className="text-sm font-bold text-foreground">£{Number(j.price).toFixed(2)}</span>
                   {j.status === 'completed' ? (
                     <CheckCircle className="h-5 w-5 text-success" />
                   ) : (
