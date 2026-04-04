@@ -192,6 +192,18 @@ export default function InvoiceDetailPage() {
             <>
               <p className="text-sm text-muted-foreground">{invoice.description}</p>
               <p className="text-2xl font-bold text-foreground">£{Number(invoice.amount).toFixed(2)}</p>
+              {(invoice as any).vat_included && (() => {
+                const gross = Number(invoice.amount);
+                const net = gross / 1.2;
+                const vat = gross - net;
+                return (
+                  <div className="rounded-lg bg-muted/50 px-3 py-2 space-y-0.5 text-xs text-muted-foreground">
+                    <div className="flex justify-between"><span>Net</span><span>£{net.toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span>VAT (20%)</span><span>£{vat.toFixed(2)}</span></div>
+                    <div className="flex justify-between font-semibold text-foreground"><span>Total</span><span>£{gross.toFixed(2)}</span></div>
+                  </div>
+                );
+              })()}
               {invoice.due_date && (() => {
                 const isOverdue = !isPaid && new Date(invoice.due_date) < new Date();
                 return (

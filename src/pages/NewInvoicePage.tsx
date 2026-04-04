@@ -11,6 +11,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ArrowLeft, CalendarIcon } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { format, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -23,6 +25,11 @@ export default function NewInvoicePage() {
 
   const [form, setForm] = useState({ customer_id: '', description: '', amount: '', job_id: jobId || '' });
   const [dueDate, setDueDate] = useState<Date>(addDays(new Date(), 14));
+  const [vatIncluded, setVatIncluded] = useState(false);
+
+  const netAmount = parseFloat(form.amount) || 0;
+  const vatAmount = vatIncluded ? netAmount * 0.2 : 0;
+  const grossAmount = netAmount + vatAmount;
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers', user?.id],
@@ -57,10 +64,11 @@ export default function NewInvoicePage() {
         customer_id: form.customer_id,
         job_id: form.job_id || null,
         description: form.description,
-        amount: parseFloat(form.amount),
+        amount: grossAmount,
+        vat_included: vatIncluded,
         due_date: format(dueDate, 'yyyy-MM-dd'),
         status: 'unpaid',
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -83,7 +91,28 @@ export default function NewInvoicePage() {
           {customers.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
         <Textarea placeholder="Description *" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="text-base min-h-[80px]" required />
-        <Input placeholder="Amount (£) *" type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="h-12 text-base" required />
+        <Input placeholder="Net Amount (£) *" type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="h-12 text-base" required />
+
+        <div className="flex items-center justify-between rounded-lg border border-input bg-card px-4 py-3">
+          <Label htmlFor="vat-toggle" className="text-base font-medium text-foreground cursor-pointer">Add VAT (20%)</Label>
+          <Switch id="vat-toggle" checked={vatIncluded} onCheckedChange={setVatIncluded} />
+        </div>
+
+        {netAmount > 0 && (
+          <div className="rounded-lg bg-muted/50 px-4 py-3 space-y-1">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Net</span><span>£{netAmount.toFixed(2)}</span>
+            </div>
+            {vatIncluded && (
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>VAT (20%)</span><span>£{vatAmount.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-base font-bold text-foreground border-t border-border pt-1">
+              <span>Total</span><span>£{grossAmount.toFixed(2)}</span>
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="text-sm font-medium text-foreground mb-1.5 block">Due Date</label>
