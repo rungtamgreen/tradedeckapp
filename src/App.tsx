@@ -24,6 +24,7 @@ import InstallPage from "./pages/InstallPage";
 import AcceptQuotePage from "./pages/AcceptQuotePage";
 import PricingPage from "./pages/PricingPage";
 import LandingPage from "./pages/LandingPage";
+import UnsubscribePage from "./pages/UnsubscribePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +80,7 @@ const App = () => (
                 <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
                 <Route path="/install" element={<InstallPage />} />
                 <Route path="/accept-quote" element={<AcceptQuotePage />} />
+                <Route path="/unsubscribe" element={<UnsubscribePage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </SubscriptionProvider>
