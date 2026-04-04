@@ -26,6 +26,7 @@ import QuoteDetailPage from "./pages/QuoteDetailPage";
 import InstallPage from "./pages/InstallPage";
 import AcceptQuotePage from "./pages/AcceptQuotePage";
 import PricingPage from "./pages/PricingPage";
+import ReportsPage from "./pages/ReportsPage";
 import LandingPage from "./pages/LandingPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
 import NotFound from "./pages/NotFound";
@@ -84,6 +85,7 @@ const App = () => (
                 <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
                 <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
                 <Route path="/install" element={<InstallPage />} />
                 <Route path="/accept-quote" element={<AcceptQuotePage />} />
                 <Route path="/unsubscribe" element={<UnsubscribePage />} />

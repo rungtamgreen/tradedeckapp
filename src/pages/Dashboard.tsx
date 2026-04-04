@@ -6,7 +6,7 @@ import { QuickAction } from '@/components/QuickAction';
 import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
@@ -98,10 +98,11 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">Quick Actions</h2>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <QuickAction label="New Job" icon={<Wrench className="h-5 w-5" />} onClick={() => navigate('/jobs/new')} />
             <QuickAction label="Invoice" icon={<Receipt className="h-5 w-5" />} onClick={() => navigate('/invoices/new')} />
             <QuickAction label="Customer" icon={<Plus className="h-5 w-5" />} onClick={() => navigate('/customers/new')} />
+            <QuickAction label="Reports" icon={<BarChart3 className="h-5 w-5" />} onClick={() => navigate('/reports')} />
           </div>
         </div>
       </div>
