@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Save, Loader2, Camera, Building2, MapPin,
-  CreditCard, FileText, LogOut, Shield, Hash,
+  CreditCard, FileText, LogOut, Shield, Hash, Crown,
 } from 'lucide-react';
 
 interface BusinessProfile {
@@ -323,7 +323,10 @@ export default function SettingsPage() {
         </Button>
 
         {/* Quick links */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
+          <Button variant="outline" className="h-12" onClick={() => navigate('/pricing')}>
+            <Crown className="h-4 w-4 mr-2" /> Plans
+          </Button>
           <Button variant="outline" className="h-12" onClick={() => navigate('/security')}>
             <Shield className="h-4 w-4 mr-2" /> Security
           </Button>
