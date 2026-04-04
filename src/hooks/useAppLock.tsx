@@ -55,7 +55,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
   const unlock = useCallback(() => {
     setIsLocked(false);
-    sessionStorage.setItem('tradeflow_unlocked', Date.now().toString());
+    sessionStorage.setItem('jobdeck_unlocked', Date.now().toString());
   }, []);
 
   const setLockMethod = useCallback(async (method: LockMethod, pin?: string) => {
