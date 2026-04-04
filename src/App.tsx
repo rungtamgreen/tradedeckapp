@@ -82,6 +82,7 @@ const App = () => (
                 <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
                 <Route path="/invoices/:id" element={<ProtectedRoute><InvoiceDetailPage /></ProtectedRoute>} />
                 <Route path="/security" element={<ProtectedRoute><SecurityPage /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
                 <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
                 <Route path="/install" element={<InstallPage />} />
                 <Route path="/accept-quote" element={<AcceptQuotePage />} />

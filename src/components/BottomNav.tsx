@@ -1,12 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, FileText, Wrench, Crown } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Wrench, Settings } from 'lucide-react';
 
 const tabs = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/customers', icon: Users, label: 'Customers' },
   { to: '/quotes', icon: FileText, label: 'Quotes' },
   { to: '/jobs', icon: Wrench, label: 'Jobs' },
-  { to: '/pricing', icon: Crown, label: 'Plans' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNav() {
