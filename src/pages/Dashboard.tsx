@@ -5,6 +5,7 @@ import { StatCard } from '@/components/StatCard';
 import { QuickAction } from '@/components/QuickAction';
 import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
