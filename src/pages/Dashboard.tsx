@@ -34,10 +34,11 @@ export default function Dashboard() {
     queryFn: async () => {
       const today = new Date().toISOString().split('T')[0];
 
-      const [jobsRes, quotesRes, invoicesRes] = await Promise.all([
+      const [jobsRes, quotesRes, invoicesRes, activeJobsRes] = await Promise.all([
         supabase.from('jobs').select('id', { count: 'exact' }).eq('user_id', user!.id).eq('scheduled_date', today),
         supabase.from('quotes').select('id', { count: 'exact' }).eq('user_id', user!.id).eq('status', 'pending'),
         supabase.from('invoices').select('amount', { count: 'exact' }).eq('user_id', user!.id).eq('status', 'unpaid'),
+        supabase.from('jobs').select('id', { count: 'exact' }).eq('user_id', user!.id).neq('status', 'completed'),
       ]);
 
       const outstanding = invoicesRes.data?.reduce((sum, inv) => sum + Number(inv.amount), 0) ?? 0;
@@ -47,6 +48,7 @@ export default function Dashboard() {
         pendingQuotes: quotesRes.count ?? 0,
         unpaidInvoices: invoicesRes.count ?? 0,
         outstanding,
+        activeJobs: activeJobsRes.count ?? 0,
       };
     },
   });
