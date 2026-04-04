@@ -25,6 +25,11 @@ export default function NewInvoicePage() {
 
   const [form, setForm] = useState({ customer_id: '', description: '', amount: '', job_id: jobId || '' });
   const [dueDate, setDueDate] = useState<Date>(addDays(new Date(), 14));
+  const [vatIncluded, setVatIncluded] = useState(false);
+
+  const netAmount = parseFloat(form.amount) || 0;
+  const vatAmount = vatIncluded ? netAmount * 0.2 : 0;
+  const grossAmount = netAmount + vatAmount;
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers', user?.id],
