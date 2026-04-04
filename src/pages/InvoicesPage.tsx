@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, CheckCircle, Clock, Receipt } from 'lucide-react';
+import { Plus, CheckCircle, Clock, Receipt, Send } from 'lucide-react';
 
 export default function InvoicesPage() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function InvoicesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('invoices')
-        .select('*, customers(name)')
+        .select('*, customers(name, email)')
         .eq('user_id', user!.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -36,6 +36,29 @@ export default function InvoicesPage() {
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       toast.success('Invoice marked as paid');
     },
+  });
+
+  const sendReminderMutation = useMutation({
+    mutationFn: async (invoice: any) => {
+      const email = invoice.customers?.email;
+      if (!email) throw new Error('Customer has no email address');
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'invoice-reminder',
+          recipientEmail: email,
+          idempotencyKey: `invoice-reminder-${invoice.id}-${Date.now()}`,
+          templateData: {
+            customerName: invoice.customers?.name,
+            invoiceDescription: invoice.description,
+            invoiceAmount: `£${Number(invoice.amount).toFixed(2)}`,
+            dueDate: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined,
+          },
+        },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => toast.success('Payment reminder sent'),
+    onError: (err: any) => toast.error(err.message || 'Failed to send reminder'),
   });
 
   return (
@@ -78,14 +101,25 @@ export default function InvoicesPage() {
                 </div>
               </div>
               {inv.status !== 'paid' && (
-                <Button
-                  size="sm"
-                  className="w-full mt-3 touch-target bg-success text-success-foreground hover:bg-success/90"
-                  onClick={() => markPaidMutation.mutate(inv.id)}
-                  disabled={markPaidMutation.isPending}
-                >
-                  <CheckCircle className="h-4 w-4 mr-1" /> Mark as Paid
-                </Button>
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 touch-target"
+                    onClick={() => sendReminderMutation.mutate(inv)}
+                    disabled={sendReminderMutation.isPending}
+                  >
+                    <Send className="h-4 w-4 mr-1" /> Send Reminder
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1 touch-target bg-success text-success-foreground hover:bg-success/90"
+                    onClick={() => markPaidMutation.mutate(inv.id)}
+                    disabled={markPaidMutation.isPending}
+                  >
+                    <CheckCircle className="h-4 w-4 mr-1" /> Mark as Paid
+                  </Button>
+                </div>
               )}
             </div>
           ))}
