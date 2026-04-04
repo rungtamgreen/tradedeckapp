@@ -38,6 +38,29 @@ export default function InvoicesPage() {
     },
   });
 
+  const sendReminderMutation = useMutation({
+    mutationFn: async (invoice: any) => {
+      const email = invoice.customers?.email;
+      if (!email) throw new Error('Customer has no email address');
+      const { error } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'invoice-reminder',
+          recipientEmail: email,
+          idempotencyKey: `invoice-reminder-${invoice.id}-${Date.now()}`,
+          templateData: {
+            customerName: invoice.customers?.name,
+            invoiceDescription: invoice.description,
+            invoiceAmount: `£${Number(invoice.amount).toFixed(2)}`,
+            dueDate: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined,
+          },
+        },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => toast.success('Payment reminder sent'),
+    onError: (err: any) => toast.error(err.message || 'Failed to send reminder'),
+  });
+
   return (
     <AppLayout
       title="Invoices"
