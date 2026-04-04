@@ -36,7 +36,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "tradedeckapp"
+const SITE_NAME = "JobDeck"
 const SENDER_DOMAIN = "notify.jobdeck.app"
 const ROOT_DOMAIN = "jobdeck.app"
 const FROM_DOMAIN = "jobdeck.app" // Domain shown in From address (may be root or sender subdomain)
