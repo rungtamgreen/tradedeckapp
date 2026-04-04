@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, CheckCircle, Clock, Receipt } from 'lucide-react';
+import { Plus, CheckCircle, Clock, Receipt, Send } from 'lucide-react';
 
 export default function InvoicesPage() {
   const navigate = useNavigate();
