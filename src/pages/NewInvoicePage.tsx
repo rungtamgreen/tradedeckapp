@@ -64,10 +64,11 @@ export default function NewInvoicePage() {
         customer_id: form.customer_id,
         job_id: form.job_id || null,
         description: form.description,
-        amount: parseFloat(form.amount),
+        amount: grossAmount,
+        vat_included: vatIncluded,
         due_date: format(dueDate, 'yyyy-MM-dd'),
         status: 'unpaid',
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
