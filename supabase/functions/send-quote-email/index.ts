@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     // Build accept URL
     const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "");
     // Use the app's origin for the accept link
-    const origin = req.headers.get("origin") || "https://tradeflow.lovable.app";
+    const origin = req.headers.get("origin") || "https://tradedeckapp.lovable.app";
     const acceptUrl = `${origin}/accept-quote?token=${quote.accept_token}`;
 
     const emailHtml = `
