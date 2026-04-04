@@ -16,6 +16,7 @@ import NewQuotePage from "./pages/NewQuotePage";
 import JobsPage from "./pages/JobsPage";
 import NewJobPage from "./pages/NewJobPage";
 import InvoicesPage from "./pages/InvoicesPage";
+import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import NewInvoicePage from "./pages/NewInvoicePage";
 import SecurityPage from "./pages/SecurityPage";
 import CustomerDetailPage from "./pages/CustomerDetailPage";
