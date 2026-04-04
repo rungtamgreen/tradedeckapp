@@ -14,6 +14,7 @@ import NewCustomerPage from "./pages/NewCustomerPage";
 import QuotesPage from "./pages/QuotesPage";
 import NewQuotePage from "./pages/NewQuotePage";
 import JobsPage from "./pages/JobsPage";
+import JobDetailPage from "./pages/JobDetailPage";
 import NewJobPage from "./pages/NewJobPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import InvoiceDetailPage from "./pages/InvoiceDetailPage";
@@ -75,6 +76,7 @@ const App = () => (
                 <Route path="/quotes/new" element={<ProtectedRoute><NewQuotePage /></ProtectedRoute>} />
                 <Route path="/jobs" element={<ProtectedRoute><JobsPage /></ProtectedRoute>} />
                 <Route path="/jobs/new" element={<ProtectedRoute><NewJobPage /></ProtectedRoute>} />
+                <Route path="/jobs/:id" element={<ProtectedRoute><JobDetailPage /></ProtectedRoute>} />
                 <Route path="/invoices" element={<ProtectedRoute><InvoicesPage /></ProtectedRoute>} />
                 <Route path="/invoices/new" element={<ProtectedRoute><NewInvoicePage /></ProtectedRoute>} />
                 <Route path="/invoices/:id" element={<ProtectedRoute><InvoiceDetailPage /></ProtectedRoute>} />

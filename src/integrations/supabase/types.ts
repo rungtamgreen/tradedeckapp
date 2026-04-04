@@ -206,6 +206,7 @@ export type Database = {
           id: string
           materials_cost: number | null
           materials_notes: string | null
+          notes: string | null
           price: number
           quote_id: string | null
           scheduled_date: string | null
@@ -221,6 +222,7 @@ export type Database = {
           id?: string
           materials_cost?: number | null
           materials_notes?: string | null
+          notes?: string | null
           price: number
           quote_id?: string | null
           scheduled_date?: string | null
@@ -236,6 +238,7 @@ export type Database = {
           id?: string
           materials_cost?: number | null
           materials_notes?: string | null
+          notes?: string | null
           price?: number
           quote_id?: string | null
           scheduled_date?: string | null
