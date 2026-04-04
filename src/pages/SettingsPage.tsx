@@ -169,6 +169,18 @@ export default function SettingsPage() {
   return (
     <AppLayout title="Settings">
       <div className="space-y-4 pb-4">
+        {/* Current Plan */}
+        <button
+          onClick={() => navigate('/pricing')}
+          className="w-full flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 touch-target"
+        >
+          <span className="text-sm text-muted-foreground">Current Plan</span>
+          <Badge className={plan === 'pro' ? 'bg-accent text-accent-foreground' : ''}>
+            {plan === 'pro' && <Crown className="h-3 w-3 mr-1" />}
+            {plan === 'pro' ? 'Pro' : 'Free'}
+          </Badge>
+        </button>
+
         {/* Logo & Business Name */}
         <Card>
           <CardContent className="p-4 space-y-4">
