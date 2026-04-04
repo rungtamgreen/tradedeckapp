@@ -21,8 +21,9 @@ Deno.serve(async (req) => {
       });
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAuth = createClient(
-      Deno.env.get("SUPABASE_URL")!,
+      supabaseUrl,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
@@ -46,7 +47,7 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
+      supabaseUrl,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
@@ -73,76 +74,32 @@ Deno.serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      return new Response(
-        JSON.stringify({ error: "Email sending not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     // Build accept URL
-    const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "");
-    // Use the app's origin for the accept link
-    const origin = req.headers.get("origin") || "https://tradedeckapp.lovable.app";
+    const origin = req.headers.get("origin") || "https://jobdeck.app";
     const acceptUrl = `${origin}/accept-quote?token=${quote.accept_token}`;
 
-    const emailHtml = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="display:inline-block;background:#1e40af;border-radius:12px;padding:12px;">
-        <span style="color:#ffffff;font-size:20px;font-weight:700;">JobDeck</span>
-      </div>
-    </div>
-    
-    <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 8px;">You've received a quote</h1>
-    <p style="font-size:16px;color:#6b7280;margin:0 0 24px;">Hi ${quote.customers.name},</p>
-    
-    <div style="background:#f9fafb;border-radius:12px;padding:24px;margin-bottom:24px;">
-      <p style="font-size:14px;color:#6b7280;margin:0 0 4px;">Job description</p>
-      <p style="font-size:16px;color:#111827;font-weight:600;margin:0 0 16px;">${quote.description}</p>
-      <p style="font-size:14px;color:#6b7280;margin:0 0 4px;">Quoted price</p>
-      <p style="font-size:32px;color:#111827;font-weight:700;margin:0;">£${Number(quote.price).toFixed(2)}</p>
-    </div>
-    
-    <a href="${acceptUrl}" style="display:block;background:#16a34a;color:#ffffff;text-decoration:none;text-align:center;padding:16px 24px;border-radius:12px;font-size:18px;font-weight:700;margin-bottom:16px;">
-      ✅ Accept Quote
-    </a>
-    
-    <p style="font-size:13px;color:#9ca3af;text-align:center;">
-      If you have questions, reply directly to your tradesperson.
-    </p>
-    
-    <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;" />
-    <p style="font-size:11px;color:#d1d5db;text-align:center;">Sent via JobDeck</p>
-  </div>
-</body>
-</html>`;
+    // Send via the transactional email system (queue-based with retries)
+    const { error: invokeError } = await supabase.functions.invoke(
+      "send-transactional-email",
+      {
+        body: {
+          templateName: "quote-confirmation",
+          recipientEmail: customerEmail,
+          idempotencyKey: `quote-confirm-${quoteId}`,
+          templateData: {
+            customerName: quote.customers.name,
+            quoteDescription: quote.description,
+            quoteAmount: `£${Number(quote.price).toFixed(2)}`,
+            viewQuoteUrl: acceptUrl,
+          },
+        },
+      }
+    );
 
-    // Send via Lovable email API
-    const emailRes = await fetch("https://api.lovable.dev/v1/email/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        to: customerEmail,
-        subject: `Quote for: ${quote.description}`,
-        html: emailHtml,
-        purpose: "transactional",
-      }),
-    });
-
-    if (!emailRes.ok) {
-      const errBody = await emailRes.text();
-      console.error("Email send failed:", errBody);
+    if (invokeError) {
+      console.error("Failed to send quote email:", invokeError);
       return new Response(
-        JSON.stringify({ error: "Failed to send email. Check email domain setup." }),
+        JSON.stringify({ error: "Failed to send email" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
