@@ -84,7 +84,7 @@ export default function InvoicesPage() {
       ) : (
         <div className="space-y-2">
           {invoices.map((inv: any) => (
-            <div key={inv.id} className="bg-card border border-border rounded-lg p-4">
+            <div key={inv.id} className="bg-card border border-border rounded-lg p-4 cursor-pointer active:bg-muted/50" onClick={() => navigate(`/invoices/${inv.id}`)}>
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-foreground">{inv.customers?.name || 'Unknown'}</p>
