@@ -82,7 +82,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
     setLockMethodState(method);
     if (method === 'none') {
-      sessionStorage.removeItem('tradeflow_unlocked');
+      sessionStorage.removeItem('jobdeck_unlocked');
       setIsLocked(false);
     }
   }, [user]);
