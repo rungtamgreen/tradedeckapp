@@ -18,7 +18,7 @@ export default function JobsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('jobs')
-        .select('*, customers(name)')
+        .select('*, customers(name, email)')
         .eq('user_id', user!.id)
         .order('scheduled_date', { ascending: true });
       if (error) throw error;
@@ -27,14 +27,31 @@ export default function JobsPage() {
   });
 
   const completeMutation = useMutation({
-    mutationFn: async (jobId: string) => {
-      const { error } = await supabase.from('jobs').update({ status: 'completed' }).eq('id', jobId);
+    mutationFn: async (job: any) => {
+      const { error } = await supabase.from('jobs').update({ status: 'completed' }).eq('id', job.id);
       if (error) throw error;
+
+      // Send job-completed notification if customer has email
+      if (job.customers?.email) {
+        await supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'job-completed',
+            recipientEmail: job.customers.email,
+            idempotencyKey: `job-completed-${job.id}`,
+            templateData: {
+              customerName: job.customers.name,
+              jobDescription: job.description,
+              jobPrice: `£${Number(job.price).toFixed(2)}`,
+              completedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+            },
+          },
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      toast.success('Job marked complete');
+      toast.success('Job marked complete — customer notified');
     },
   });
 
@@ -85,7 +102,7 @@ export default function JobsPage() {
                     size="sm"
                     variant="outline"
                     className="flex-1 touch-target"
-                    onClick={() => completeMutation.mutate(j.id)}
+                    onClick={() => completeMutation.mutate(j)}
                     disabled={completeMutation.isPending}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" /> Complete
