@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   Save, Loader2, Camera, Building2, MapPin,
-  CreditCard, FileText, LogOut, Shield, Hash,
+  CreditCard, FileText, LogOut, Shield, Hash, Crown,
 } from 'lucide-react';
 
 interface BusinessProfile {
