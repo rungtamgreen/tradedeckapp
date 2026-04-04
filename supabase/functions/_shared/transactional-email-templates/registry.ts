@@ -11,10 +11,12 @@ export interface TemplateEntry {
 
 import { template as quoteConfirmation } from './quote-confirmation.tsx'
 import { template as invoiceReminder } from './invoice-reminder.tsx'
+import { template as invoiceSend } from './invoice-send.tsx'
 import { template as jobCompleted } from './job-completed.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'quote-confirmation': quoteConfirmation,
   'invoice-reminder': invoiceReminder,
+  'invoice-send': invoiceSend,
   'job-completed': jobCompleted,
 }
