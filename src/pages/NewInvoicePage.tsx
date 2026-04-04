@@ -91,7 +91,10 @@ export default function NewInvoicePage() {
           {customers.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
         <Textarea placeholder="Description *" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="text-base min-h-[80px]" required />
-        <Input placeholder="Net Amount (£) *" type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="h-12 text-base" required />
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base font-medium text-muted-foreground">£</span>
+          <Input placeholder="0.00" type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="h-12 text-base pl-8" required />
+        </div>
 
         <div className="flex items-center justify-between rounded-lg border border-input bg-card px-4 py-3">
           <Label htmlFor="vat-toggle" className="text-base font-medium text-foreground cursor-pointer">Add VAT (20%)</Label>
