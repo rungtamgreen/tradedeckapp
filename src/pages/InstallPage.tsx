@@ -84,7 +84,7 @@ export default function InstallPage() {
         </>
       ) : deferredPrompt ? (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Get instant access from your home screen. No app store needed.</p>
           <Button
             size="lg"
