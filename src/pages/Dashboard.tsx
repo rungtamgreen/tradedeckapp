@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { plan, refreshSubscription } = useSubscription();
+  const { refreshSubscription } = useSubscription();
   const [searchParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
 
