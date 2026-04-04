@@ -1,16 +1,19 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, ChevronRight, CheckCircle, Clock } from 'lucide-react';
+import { Plus, CheckCircle, Clock, X } from 'lucide-react';
 
 export default function JobsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statusFilter = searchParams.get('status');
 
   const { data: jobs = [], isLoading } = useQuery({
     queryKey: ['jobs', user?.id],
@@ -26,12 +29,18 @@ export default function JobsPage() {
     },
   });
 
+  const filtered = statusFilter
+    ? jobs.filter((j: any) => {
+        if (statusFilter === 'active') return j.status !== 'completed';
+        return j.status === statusFilter;
+      })
+    : jobs;
+
   const completeMutation = useMutation({
     mutationFn: async (job: any) => {
       const { error } = await supabase.from('jobs').update({ status: 'completed' }).eq('id', job.id);
       if (error) throw error;
 
-      // Send job-completed notification if customer has email
       if (job.customers?.email) {
         await supabase.functions.invoke('send-transactional-email', {
           body: {
@@ -55,6 +64,12 @@ export default function JobsPage() {
     },
   });
 
+  const filterLabel: Record<string, string> = {
+    active: 'Active Jobs',
+    completed: 'Completed Jobs',
+    scheduled: 'Scheduled Jobs',
+  };
+
   return (
     <AppLayout
       title="Jobs"
@@ -64,20 +79,36 @@ export default function JobsPage() {
         </Button>
       }
     >
+      {statusFilter && (
+        <div className="mb-4">
+          <Badge variant="secondary" className="text-sm px-3 py-1.5 gap-1.5">
+            Showing: {filterLabel[statusFilter] || statusFilter}
+            <button
+              onClick={() => setSearchParams({})}
+              className="ml-1 hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </Badge>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => <div key={i} className="h-20 bg-muted rounded-lg animate-pulse" />)}
         </div>
-      ) : jobs.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No jobs yet</p>
-          <Button onClick={() => navigate('/jobs/new')}>
-            <Plus className="h-4 w-4 mr-1" /> Add First Job
-          </Button>
+          <p className="text-muted-foreground mb-4">{statusFilter ? 'No matching jobs' : 'No jobs yet'}</p>
+          {!statusFilter && (
+            <Button onClick={() => navigate('/jobs/new')}>
+              <Plus className="h-4 w-4 mr-1" /> Add First Job
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
-          {jobs.map((j: any) => (
+          {filtered.map((j: any) => (
             <div key={j.id} className="bg-card border border-border rounded-lg p-4 space-y-3 cursor-pointer active:bg-muted/50" onClick={() => navigate(`/jobs/${j.id}`)}>
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -102,7 +133,7 @@ export default function JobsPage() {
                     size="sm"
                     variant="outline"
                     className="flex-1 touch-target"
-                    onClick={() => completeMutation.mutate(j)}
+                    onClick={(e) => { e.stopPropagation(); completeMutation.mutate(j); }}
                     disabled={completeMutation.isPending}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" /> Complete
@@ -110,7 +141,7 @@ export default function JobsPage() {
                   <Button
                     size="sm"
                     className="flex-1 touch-target"
-                    onClick={() => navigate(`/invoices/new?job_id=${j.id}`)}
+                    onClick={(e) => { e.stopPropagation(); navigate(`/invoices/new?job_id=${j.id}`); }}
                   >
                     Generate Invoice
                   </Button>

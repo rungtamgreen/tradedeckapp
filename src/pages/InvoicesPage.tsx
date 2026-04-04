@@ -1,16 +1,19 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Plus, CheckCircle, Clock, Receipt, Send } from 'lucide-react';
+import { Plus, CheckCircle, Clock, Receipt, Send, X } from 'lucide-react';
 
 export default function InvoicesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statusFilter = searchParams.get('status');
 
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ['invoices', user?.id],
@@ -25,6 +28,10 @@ export default function InvoicesPage() {
       return data;
     },
   });
+
+  const filtered = statusFilter
+    ? invoices.filter((inv: any) => inv.status === statusFilter)
+    : invoices;
 
   const markPaidMutation = useMutation({
     mutationFn: async (invoiceId: string) => {
@@ -61,6 +68,11 @@ export default function InvoicesPage() {
     onError: (err: any) => toast.error(err.message || 'Failed to send reminder'),
   });
 
+  const filterLabel: Record<string, string> = {
+    unpaid: 'Unpaid Invoices',
+    paid: 'Paid Invoices',
+  };
+
   return (
     <AppLayout
       title="Invoices"
@@ -70,20 +82,36 @@ export default function InvoicesPage() {
         </Button>
       }
     >
+      {statusFilter && (
+        <div className="mb-4">
+          <Badge variant="secondary" className="text-sm px-3 py-1.5 gap-1.5">
+            Showing: {filterLabel[statusFilter] || statusFilter}
+            <button
+              onClick={() => setSearchParams({})}
+              className="ml-1 hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </Badge>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => <div key={i} className="h-16 bg-muted rounded-lg animate-pulse" />)}
         </div>
-      ) : invoices.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No invoices yet</p>
-          <Button onClick={() => navigate('/invoices/new')}>
-            <Plus className="h-4 w-4 mr-1" /> Create First Invoice
-          </Button>
+          <p className="text-muted-foreground mb-4">{statusFilter ? 'No matching invoices' : 'No invoices yet'}</p>
+          {!statusFilter && (
+            <Button onClick={() => navigate('/invoices/new')}>
+              <Plus className="h-4 w-4 mr-1" /> Create First Invoice
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
-          {invoices.map((inv: any) => (
+          {filtered.map((inv: any) => (
             <div key={inv.id} className="bg-card border border-border rounded-lg p-4 cursor-pointer active:bg-muted/50" onClick={() => navigate(`/invoices/${inv.id}`)}>
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
@@ -106,7 +134,7 @@ export default function InvoicesPage() {
                     size="sm"
                     variant="outline"
                     className="flex-1 touch-target"
-                    onClick={() => sendReminderMutation.mutate(inv)}
+                    onClick={(e) => { e.stopPropagation(); sendReminderMutation.mutate(inv); }}
                     disabled={sendReminderMutation.isPending}
                   >
                     <Send className="h-4 w-4 mr-1" /> Send Reminder
@@ -114,7 +142,7 @@ export default function InvoicesPage() {
                   <Button
                     size="sm"
                     className="flex-1 touch-target bg-success text-success-foreground hover:bg-success/90"
-                    onClick={() => markPaidMutation.mutate(inv.id)}
+                    onClick={(e) => { e.stopPropagation(); markPaidMutation.mutate(inv.id); }}
                     disabled={markPaidMutation.isPending}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" /> Mark as Paid

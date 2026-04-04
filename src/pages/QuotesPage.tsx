@@ -1,14 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { ArrowLeft, Plus, ChevronRight, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, CheckCircle, XCircle, Clock, X } from 'lucide-react';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-accent/10 text-accent',
@@ -19,6 +16,8 @@ const statusColors: Record<string, string> = {
 export default function QuotesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const statusFilter = searchParams.get('status');
 
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ['quotes', user?.id],
@@ -34,10 +33,20 @@ export default function QuotesPage() {
     },
   });
 
+  const filtered = statusFilter
+    ? quotes.filter((q: any) => q.status === statusFilter)
+    : quotes;
+
   const StatusIcon = ({ status }: { status: string }) => {
     if (status === 'accepted') return <CheckCircle className="h-4 w-4" />;
     if (status === 'declined') return <XCircle className="h-4 w-4" />;
     return <Clock className="h-4 w-4" />;
+  };
+
+  const filterLabel: Record<string, string> = {
+    pending: 'Pending Quotes',
+    accepted: 'Accepted Quotes',
+    declined: 'Declined Quotes',
   };
 
   return (
@@ -49,20 +58,36 @@ export default function QuotesPage() {
         </Button>
       }
     >
+      {statusFilter && (
+        <div className="mb-4">
+          <Badge variant="secondary" className="text-sm px-3 py-1.5 gap-1.5">
+            Showing: {filterLabel[statusFilter] || statusFilter}
+            <button
+              onClick={() => setSearchParams({})}
+              className="ml-1 hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </Badge>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => <div key={i} className="h-16 bg-muted rounded-lg animate-pulse" />)}
         </div>
-      ) : quotes.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No quotes yet</p>
-          <Button onClick={() => navigate('/quotes/new')}>
-            <Plus className="h-4 w-4 mr-1" /> Create First Quote
-          </Button>
+          <p className="text-muted-foreground mb-4">{statusFilter ? 'No matching quotes' : 'No quotes yet'}</p>
+          {!statusFilter && (
+            <Button onClick={() => navigate('/quotes/new')}>
+              <Plus className="h-4 w-4 mr-1" /> Create First Quote
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-2">
-          {quotes.map((q: any) => (
+          {filtered.map((q: any) => (
             <button
               key={q.id}
               onClick={() => navigate(`/quotes/${q.id}`)}
