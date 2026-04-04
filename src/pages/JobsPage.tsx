@@ -78,7 +78,7 @@ export default function JobsPage() {
       ) : (
         <div className="space-y-2">
           {jobs.map((j: any) => (
-            <div key={j.id} className="bg-card border border-border rounded-lg p-4 space-y-3">
+            <div key={j.id} className="bg-card border border-border rounded-lg p-4 space-y-3 cursor-pointer active:bg-muted/50" onClick={() => navigate(`/jobs/${j.id}`)}>
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-foreground">{j.customers?.name || 'Unknown'}</p>
