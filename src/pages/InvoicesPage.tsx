@@ -101,14 +101,25 @@ export default function InvoicesPage() {
                 </div>
               </div>
               {inv.status !== 'paid' && (
-                <Button
-                  size="sm"
-                  className="w-full mt-3 touch-target bg-success text-success-foreground hover:bg-success/90"
-                  onClick={() => markPaidMutation.mutate(inv.id)}
-                  disabled={markPaidMutation.isPending}
-                >
-                  <CheckCircle className="h-4 w-4 mr-1" /> Mark as Paid
-                </Button>
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 touch-target"
+                    onClick={() => sendReminderMutation.mutate(inv)}
+                    disabled={sendReminderMutation.isPending}
+                  >
+                    <Send className="h-4 w-4 mr-1" /> Send Reminder
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1 touch-target bg-success text-success-foreground hover:bg-success/90"
+                    onClick={() => markPaidMutation.mutate(inv.id)}
+                    disabled={markPaidMutation.isPending}
+                  >
+                    <CheckCircle className="h-4 w-4 mr-1" /> Mark as Paid
+                  </Button>
+                </div>
               )}
             </div>
           ))}
