@@ -65,7 +65,7 @@ export default function InstallPage() {
         </>
       ) : isIOS ? (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Add this app to your home screen for instant access.</p>
           <div className="bg-card border border-border rounded-xl p-6 text-left space-y-4 w-full max-w-sm">
             <div className="flex items-start gap-3">
