@@ -1,0 +1,1 @@
+ALTER TABLE public.quotes ADD COLUMN expires_at date NULL;
