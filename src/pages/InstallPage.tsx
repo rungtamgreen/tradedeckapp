@@ -58,7 +58,7 @@ export default function InstallPage() {
         <>
           <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-2">App Installed!</h1>
-          <p className="text-muted-foreground mb-6">TradeFlow is on your home screen. Open it anytime like a real app.</p>
+          <p className="text-muted-foreground mb-6">JobDeck is on your home screen. Open it anytime like a real app.</p>
           <Button size="lg" className="h-14 text-lg px-8" onClick={() => navigate('/')}>
             Open App
           </Button>
