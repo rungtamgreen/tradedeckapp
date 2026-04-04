@@ -192,11 +192,15 @@ export default function InvoiceDetailPage() {
             <>
               <p className="text-sm text-muted-foreground">{invoice.description}</p>
               <p className="text-2xl font-bold text-foreground">£{Number(invoice.amount).toFixed(2)}</p>
-              {invoice.due_date && (
-                <p className="text-xs text-muted-foreground">
-                  Due: {new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-              )}
+              {invoice.due_date && (() => {
+                const isOverdue = !isPaid && new Date(invoice.due_date) < new Date();
+                return (
+                  <p className={`text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
+                    {isOverdue ? '⚠ Overdue — ' : 'Due: '}
+                    {new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                );
+              })()}
               {invoice.paid_at && (
                 <p className="text-xs text-muted-foreground">
                   Paid: {new Date(invoice.paid_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
