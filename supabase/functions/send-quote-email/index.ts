@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="display:inline-block;background:#1e40af;border-radius:12px;padding:12px;">
-        <span style="color:#ffffff;font-size:20px;font-weight:700;">TradeFlow</span>
+        <span style="color:#ffffff;font-size:20px;font-weight:700;">JobDeck</span>
       </div>
     </div>
     
