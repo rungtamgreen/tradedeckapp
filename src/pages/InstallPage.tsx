@@ -97,7 +97,7 @@ export default function InstallPage() {
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Open this page in Chrome or Safari, then use the browser menu to add it to your home screen.</p>
         </>
       )}

@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     </p>
     
     <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;" />
-    <p style="font-size:11px;color:#d1d5db;text-align:center;">Sent via TradeFlow</p>
+    <p style="font-size:11px;color:#d1d5db;text-align:center;">Sent via JobDeck</p>
   </div>
 </body>
 </html>`;

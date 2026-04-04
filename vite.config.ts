@@ -44,8 +44,8 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: "TradeFlow - Job Management",
-        short_name: "TradeFlow",
+        name: "JobDeck - Job Management",
+        short_name: "JobDeck",
         description: "Fast job management for tradespeople. Quotes, jobs, and invoices in seconds.",
         theme_color: "#2B5DAE",
         background_color: "#f5f7fa",

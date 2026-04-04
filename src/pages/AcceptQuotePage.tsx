@@ -99,7 +99,7 @@ export default function AcceptQuotePage() {
           </>
         )}
 
-        <p className="text-xs text-gray-400 pt-4">Powered by TradeFlow</p>
+        <p className="text-xs text-gray-400 pt-4">Powered by JobDeck</p>
       </div>
     </div>
   );

@@ -112,7 +112,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
       const credential = await navigator.credentials.create({
         publicKey: {
           challenge,
-          rp: { name: 'TradeFlow', id: window.location.hostname },
+          rp: { name: 'JobDeck', id: window.location.hostname },
           user: {
             id: userId,
             name: user.email || 'user',
