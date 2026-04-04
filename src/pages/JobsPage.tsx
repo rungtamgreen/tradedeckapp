@@ -73,6 +73,7 @@ export default function JobsPage() {
   return (
     <AppLayout
       title="Jobs"
+      back
       action={
         <Button size="sm" onClick={() => navigate('/jobs/new')} className="touch-target">
           <Plus className="h-4 w-4 mr-1" /> New
