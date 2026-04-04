@@ -76,6 +76,7 @@ export default function InvoicesPage() {
   return (
     <AppLayout
       title="Invoices"
+      back
       action={
         <Button size="sm" onClick={() => navigate('/invoices/new')} className="touch-target">
           <Plus className="h-4 w-4 mr-1" /> New

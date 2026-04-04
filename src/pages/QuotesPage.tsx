@@ -52,6 +52,7 @@ export default function QuotesPage() {
   return (
     <AppLayout
       title="Quotes"
+      back
       action={
         <Button size="sm" onClick={() => navigate('/quotes/new')} className="touch-target">
           <Plus className="h-4 w-4 mr-1" /> New
