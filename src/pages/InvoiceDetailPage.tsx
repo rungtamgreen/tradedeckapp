@@ -143,9 +143,14 @@ export default function InvoiceDetailPage() {
       <Card className="mb-4">
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-lg font-bold text-foreground">{(invoice as any).customers?.name || 'Unknown'}</p>
+            <div>
+              <p className="text-lg font-bold text-foreground">{(invoice as any).customers?.name || 'Unknown'}</p>
+              {invoice.invoice_number && (
+                <p className="text-xs text-muted-foreground font-mono">{invoice.invoice_number}</p>
+              )}
+            </div>
             <span className={`text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1 ${
-              isPaid ? 'bg-green-500/10 text-green-600' : 'bg-destructive/10 text-destructive'
+              isPaid ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
             }`}>
               {isPaid ? <CheckCircle className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
               {isPaid ? 'Paid' : 'Unpaid'}

@@ -116,7 +116,12 @@ export default function InvoicesPage() {
             <div key={inv.id} className="bg-card border border-border rounded-lg p-4 cursor-pointer active:bg-muted/50" onClick={() => navigate(`/invoices/${inv.id}`)}>
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground">{inv.customers?.name || 'Unknown'}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-foreground">{inv.customers?.name || 'Unknown'}</p>
+                    {inv.invoice_number && (
+                      <span className="text-xs text-muted-foreground font-mono">{inv.invoice_number}</span>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground">{inv.description}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {new Date(inv.created_at).toLocaleDateString()}
