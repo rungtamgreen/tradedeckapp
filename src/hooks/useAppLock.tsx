@@ -43,7 +43,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
       // Lock the app if a lock method is set and app was just opened/resumed
       if (method !== 'none') {
-        const lastUnlock = sessionStorage.getItem('tradeflow_unlocked');
+        const lastUnlock = sessionStorage.getItem('jobdeck_unlocked');
         if (!lastUnlock) {
           setIsLocked(true);
         }
@@ -55,7 +55,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
   const unlock = useCallback(() => {
     setIsLocked(false);
-    sessionStorage.setItem('tradeflow_unlocked', Date.now().toString());
+    sessionStorage.setItem('jobdeck_unlocked', Date.now().toString());
   }, []);
 
   const setLockMethod = useCallback(async (method: LockMethod, pin?: string) => {
@@ -82,7 +82,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
 
     setLockMethodState(method);
     if (method === 'none') {
-      sessionStorage.removeItem('tradeflow_unlocked');
+      sessionStorage.removeItem('jobdeck_unlocked');
       setIsLocked(false);
     }
   }, [user]);
@@ -112,7 +112,7 @@ export function AppLockProvider({ children }: { children: React.ReactNode }) {
       const credential = await navigator.credentials.create({
         publicKey: {
           challenge,
-          rp: { name: 'TradeFlow', id: window.location.hostname },
+          rp: { name: 'JobDeck', id: window.location.hostname },
           user: {
             id: userId,
             name: user.email || 'user',

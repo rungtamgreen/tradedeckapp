@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     // Build accept URL
     const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "");
     // Use the app's origin for the accept link
-    const origin = req.headers.get("origin") || "https://tradeflow.lovable.app";
+    const origin = req.headers.get("origin") || "https://tradedeckapp.lovable.app";
     const acceptUrl = `${origin}/accept-quote?token=${quote.accept_token}`;
 
     const emailHtml = `
@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="display:inline-block;background:#1e40af;border-radius:12px;padding:12px;">
-        <span style="color:#ffffff;font-size:20px;font-weight:700;">TradeFlow</span>
+        <span style="color:#ffffff;font-size:20px;font-weight:700;">JobDeck</span>
       </div>
     </div>
     
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     </p>
     
     <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;" />
-    <p style="font-size:11px;color:#d1d5db;text-align:center;">Sent via TradeFlow</p>
+    <p style="font-size:11px;color:#d1d5db;text-align:center;">Sent via JobDeck</p>
   </div>
 </body>
 </html>`;

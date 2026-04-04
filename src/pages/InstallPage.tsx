@@ -58,14 +58,14 @@ export default function InstallPage() {
         <>
           <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-2">App Installed!</h1>
-          <p className="text-muted-foreground mb-6">TradeFlow is on your home screen. Open it anytime like a real app.</p>
+          <p className="text-muted-foreground mb-6">JobDeck is on your home screen. Open it anytime like a real app.</p>
           <Button size="lg" className="h-14 text-lg px-8" onClick={() => navigate('/')}>
             Open App
           </Button>
         </>
       ) : isIOS ? (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Add this app to your home screen for instant access.</p>
           <div className="bg-card border border-border rounded-xl p-6 text-left space-y-4 w-full max-w-sm">
             <div className="flex items-start gap-3">
@@ -84,7 +84,7 @@ export default function InstallPage() {
         </>
       ) : deferredPrompt ? (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Get instant access from your home screen. No app store needed.</p>
           <Button
             size="lg"
@@ -97,7 +97,7 @@ export default function InstallPage() {
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Install TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Install JobDeck</h1>
           <p className="text-muted-foreground mb-6">Open this page in Chrome or Safari, then use the browser menu to add it to your home screen.</p>
         </>
       )}

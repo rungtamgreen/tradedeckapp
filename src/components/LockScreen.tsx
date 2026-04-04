@@ -59,7 +59,7 @@ export function LockScreen() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-primary-foreground mb-4">
             <Wrench className="h-8 w-8" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">TradeFlow</h1>
+          <h1 className="text-2xl font-bold text-foreground">JobDeck</h1>
           <p className="text-muted-foreground text-sm">Unlock to continue</p>
         </div>
 
