@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
   ArrowLeft, CheckCircle, Clock, Pencil, X, Save,
-  Loader2, Camera, Trash2, FileText, Receipt,
+  Loader2, Camera, Trash2, FileText, Receipt, Eye,
 } from 'lucide-react';
 
 export default function JobDetailPage() {
@@ -46,6 +46,22 @@ export default function JobDetailPage() {
     },
   });
 
+  // Check if invoice already exists for this job
+  const { data: existingInvoice } = useQuery({
+    queryKey: ['job-invoice', id],
+    enabled: !!user && !!id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('id')
+        .eq('job_id', id!)
+        .eq('user_id', user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   // Fetch photos from storage
   const photoFolder = user && id ? `${user.id}/${id}` : '';
   const { data: photos = [], isLoading: photosLoading } = useQuery({
@@ -71,7 +87,6 @@ export default function JobDetailPage() {
         .eq('id', id!);
       if (error) throw error;
 
-      // Send notification
       if ((job as any)?.customers?.email) {
         await supabase.functions.invoke('send-transactional-email', {
           body: {
@@ -197,7 +212,12 @@ export default function JobDetailPage() {
       <Card className="mb-4">
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-lg font-bold text-foreground">{(job as any).customers?.name || 'Unknown'}</p>
+            <button
+              onClick={() => navigate(`/customers/${job.customer_id}`)}
+              className="text-lg font-bold text-foreground hover:text-primary underline-offset-2 hover:underline transition-colors text-left"
+            >
+              {(job as any).customers?.name || 'Unknown'}
+            </button>
             <span className={`text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1 ${
               isCompleted ? 'bg-green-500/10 text-green-600' : 'bg-accent/10 text-accent'
             }`}>
@@ -306,12 +326,21 @@ export default function JobDetailPage() {
             <Button size="lg" variant="outline" className="h-14 text-base" onClick={startEditing}>
               <Pencil className="h-5 w-5 mr-2" /> Edit
             </Button>
-            <Button
-              size="lg" variant="outline" className="h-14 text-base"
-              onClick={() => navigate(`/invoices/new?job_id=${id}`)}
-            >
-              <Receipt className="h-5 w-5 mr-2" /> Invoice
-            </Button>
+            {existingInvoice ? (
+              <Button
+                size="lg" variant="outline" className="h-14 text-base"
+                onClick={() => navigate(`/invoices/${existingInvoice.id}`)}
+              >
+                <Eye className="h-5 w-5 mr-2" /> View Invoice
+              </Button>
+            ) : (
+              <Button
+                size="lg" variant="outline" className="h-14 text-base"
+                onClick={() => navigate(`/invoices/new?job_id=${id}`)}
+              >
+                <Receipt className="h-5 w-5 mr-2" /> Invoice
+              </Button>
+            )}
           </div>
         </div>
       )}
