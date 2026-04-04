@@ -196,6 +196,7 @@ export type Database = {
           status: string
           updated_at: string
           user_id: string
+          vat_included: boolean
         }
         Insert: {
           amount: number
@@ -210,6 +211,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id: string
+          vat_included?: boolean
         }
         Update: {
           amount?: number
@@ -224,6 +226,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+          vat_included?: boolean
         }
         Relationships: [
           {
