@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_profiles: {
+        Row: {
+          address: string | null
+          business_name: string | null
+          created_at: string
+          default_invoice_notes: string | null
+          default_invoice_terms: string | null
+          id: string
+          logo_url: string | null
+          payment_details: string | null
+          payment_link: string | null
+          updated_at: string
+          user_id: string
+          vat_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          business_name?: string | null
+          created_at?: string
+          default_invoice_notes?: string | null
+          default_invoice_terms?: string | null
+          id?: string
+          logo_url?: string | null
+          payment_details?: string | null
+          payment_link?: string | null
+          updated_at?: string
+          user_id: string
+          vat_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          business_name?: string | null
+          created_at?: string
+          default_invoice_notes?: string | null
+          default_invoice_terms?: string | null
+          id?: string
+          logo_url?: string | null
+          payment_details?: string | null
+          payment_link?: string | null
+          updated_at?: string
+          user_id?: string
+          vat_number?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null
