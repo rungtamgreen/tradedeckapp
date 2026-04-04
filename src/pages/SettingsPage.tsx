@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { useSubscription } from '@/hooks/useSubscription';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
@@ -31,6 +33,7 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
+  const { plan } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
@@ -167,6 +170,18 @@ export default function SettingsPage() {
   return (
     <AppLayout title="Settings">
       <div className="space-y-4 pb-4">
+        {/* Current Plan */}
+        <button
+          onClick={() => navigate('/pricing')}
+          className="w-full flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 touch-target"
+        >
+          <span className="text-sm text-muted-foreground">Current Plan</span>
+          <Badge className={plan === 'pro' ? 'bg-accent text-accent-foreground' : ''}>
+            {plan === 'pro' && <Crown className="h-3 w-3 mr-1" />}
+            {plan === 'pro' ? 'Pro' : 'Free'}
+          </Badge>
+        </button>
+
         {/* Logo & Business Name */}
         <Card>
           <CardContent className="p-4 space-y-4">

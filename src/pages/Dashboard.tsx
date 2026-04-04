@@ -6,9 +6,8 @@ import { QuickAction } from '@/components/QuickAction';
 import { QuickQuoteSheet } from '@/components/QuickQuoteSheet';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
-import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, Crown, BarChart3 } from 'lucide-react';
+import { Wrench, FileText, Receipt, Clock, Plus, LogOut, Shield, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -16,7 +15,7 @@ import { toast } from 'sonner';
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { plan, refreshSubscription } = useSubscription();
+  const { refreshSubscription } = useSubscription();
   const [searchParams] = useSearchParams();
   const [quoteOpen, setQuoteOpen] = useState(false);
 
@@ -68,17 +67,6 @@ export default function Dashboard() {
       }
     >
       <div className="space-y-5">
-        {/* Plan Badge */}
-        <button
-          onClick={() => navigate('/pricing')}
-          className="w-full flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 touch-target"
-        >
-          <span className="text-sm text-muted-foreground">Current Plan</span>
-          <Badge className={plan === 'pro' ? 'bg-accent text-accent-foreground' : ''}>
-            {plan === 'pro' && <Crown className="h-3 w-3 mr-1" />}
-            {plan === 'pro' ? 'Pro' : 'Free'}
-          </Badge>
-        </button>
 
         {/* Hero CTA — Create Quote */}
         <button
