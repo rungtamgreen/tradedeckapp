@@ -66,17 +66,6 @@ export default function Dashboard() {
       }
     >
       <div className="space-y-5">
-        {/* Plan Badge */}
-        <button
-          onClick={() => navigate('/pricing')}
-          className="w-full flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 touch-target"
-        >
-          <span className="text-sm text-muted-foreground">Current Plan</span>
-          <Badge className={plan === 'pro' ? 'bg-accent text-accent-foreground' : ''}>
-            {plan === 'pro' && <Crown className="h-3 w-3 mr-1" />}
-            {plan === 'pro' ? 'Pro' : 'Free'}
-          </Badge>
-        </button>
 
         {/* Hero CTA — Create Quote */}
         <button
