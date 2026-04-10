@@ -21,21 +21,21 @@ Deno.serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAuth = createClient(
-      supabaseUrl,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    // Verify the caller's identity using the anon-key client with the user's token
+    const supabaseAuth = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
 
     const { quoteId } = await req.json();
     if (!quoteId) {
@@ -45,10 +45,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
-      supabaseUrl,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     // Fetch quote with customer
     const { data: quote, error: quoteError } = await supabase
@@ -118,35 +115,40 @@ Deno.serve(async (req) => {
       templateData.vatNumber = bp.vat_number;
     }
 
-    // Send quote email to customer
-    const { error: invokeError } = await supabase.functions.invoke(
-      "send-transactional-email",
-      {
-        body: {
-          templateName: "quote-confirmation",
-          recipientEmail: customerEmail,
-          idempotencyKey: `quote-confirm-${quoteId}`,
-          templateData,
+    // Helper to call send-transactional-email via direct fetch
+    async function sendEmail(body: Record<string, any>) {
+      const resp = await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": authHeader!,
+          "apikey": anonKey,
         },
+        body: JSON.stringify(body),
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        console.error("send-transactional-email failed:", resp.status, text);
+        throw new Error(`Email send failed: ${resp.status}`);
       }
-    );
-
-    if (invokeError) {
-      console.error("Failed to send quote email:", invokeError);
-      return new Response(
-        JSON.stringify({ error: "Failed to send email" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return resp.json();
     }
+
+    // Send quote email to customer
+    await sendEmail({
+      templateName: "quote-confirmation",
+      recipientEmail: customerEmail,
+      idempotencyKey: `quote-confirm-${quoteId}`,
+      templateData,
+    });
 
     // Notify tradesperson if preference is on
     if (bp.notify_quote_accepted !== false) {
-      // Get auth user email as fallback
       const { data: authUser } = await supabase.auth.admin.getUserById(userId);
       const tradeEmail = bp.email || authUser?.user?.email;
       if (tradeEmail) {
-        await supabase.functions.invoke("send-transactional-email", {
-          body: {
+        try {
+          await sendEmail({
             templateName: "quote-sent-notification",
             recipientEmail: tradeEmail,
             idempotencyKey: `quote-sent-notif-${quoteId}`,
@@ -155,8 +157,10 @@ Deno.serve(async (req) => {
               quoteDescription: quote.description,
               quoteAmount: `£${Number(quote.price).toFixed(2)}`,
             },
-          },
-        });
+          });
+        } catch (e) {
+          console.error("Failed to send tradesperson notification:", e);
+        }
       }
     }
 
@@ -167,7 +171,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error("Send quote error:", err);
     return new Response(
-      JSON.stringify({ error: "Something went wrong" }),
+      JSON.stringify({ error: "Failed to send email" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
