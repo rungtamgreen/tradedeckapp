@@ -16,43 +16,82 @@ export type Database = {
     Tables: {
       business_profiles: {
         Row: {
+          account_name: string | null
+          account_number: string | null
           address: string | null
+          bank_name: string | null
           business_name: string | null
           created_at: string
           default_invoice_notes: string | null
           default_invoice_terms: string | null
+          default_quote_notes: string | null
+          email: string | null
           id: string
           logo_url: string | null
+          notify_invoice_overdue: boolean
+          notify_quote_accepted: boolean
+          notify_send_receipt: boolean
           payment_details: string | null
           payment_link: string | null
+          paypal_email: string | null
+          phone: string | null
+          postcode: string | null
+          sort_code: string | null
+          trading_name: string | null
           updated_at: string
           user_id: string
           vat_number: string | null
         }
         Insert: {
+          account_name?: string | null
+          account_number?: string | null
           address?: string | null
+          bank_name?: string | null
           business_name?: string | null
           created_at?: string
           default_invoice_notes?: string | null
           default_invoice_terms?: string | null
+          default_quote_notes?: string | null
+          email?: string | null
           id?: string
           logo_url?: string | null
+          notify_invoice_overdue?: boolean
+          notify_quote_accepted?: boolean
+          notify_send_receipt?: boolean
           payment_details?: string | null
           payment_link?: string | null
+          paypal_email?: string | null
+          phone?: string | null
+          postcode?: string | null
+          sort_code?: string | null
+          trading_name?: string | null
           updated_at?: string
           user_id: string
           vat_number?: string | null
         }
         Update: {
+          account_name?: string | null
+          account_number?: string | null
           address?: string | null
+          bank_name?: string | null
           business_name?: string | null
           created_at?: string
           default_invoice_notes?: string | null
           default_invoice_terms?: string | null
+          default_quote_notes?: string | null
+          email?: string | null
           id?: string
           logo_url?: string | null
+          notify_invoice_overdue?: boolean
+          notify_quote_accepted?: boolean
+          notify_send_receipt?: boolean
           payment_details?: string | null
           payment_link?: string | null
+          paypal_email?: string | null
+          phone?: string | null
+          postcode?: string | null
+          sort_code?: string | null
+          trading_name?: string | null
           updated_at?: string
           user_id?: string
           vat_number?: string | null
