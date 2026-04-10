@@ -42,29 +42,31 @@ export function QuickQuoteSheet({ open, onOpenChange }: QuickQuoteSheetProps) {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from('quotes').insert({
+      const { data, error } = await supabase.from('quotes').insert({
         user_id: user!.id,
         customer_id: customerId,
         description,
         price: parseFloat(price),
         status: 'pending',
-      });
+      }).select('id').single();
       if (error) throw error;
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      toast.success('Quote sent!');
-      resetAndClose();
+      toast.success('Quote created!');
+      resetForm();
+      onOpenChange(false);
+      navigate(`/quotes/${data.id}`);
     },
     onError: (err: any) => toast.error(err.message),
   });
 
-  const resetAndClose = () => {
+  const resetForm = () => {
     setCustomerId('');
     setDescription('');
     setPrice('');
-    onOpenChange(false);
   };
 
   const canSubmit = customerId && description.trim() && price && parseFloat(price) > 0;
@@ -100,7 +102,7 @@ export function QuickQuoteSheet({ open, onOpenChange }: QuickQuoteSheetProps) {
                 variant="outline"
                 size="icon"
                 className="h-14 w-14 shrink-0 rounded-xl touch-target"
-                onClick={() => { resetAndClose(); navigate('/customers/new'); }}
+                onClick={() => { resetForm(); onOpenChange(false); navigate('/customers/new'); }}
               >
                 <Plus className="h-5 w-5" />
               </Button>
@@ -156,9 +158,9 @@ export function QuickQuoteSheet({ open, onOpenChange }: QuickQuoteSheetProps) {
             className="w-full h-16 text-lg font-bold rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 active:scale-[0.97] transition-transform"
           >
             {mutation.isPending ? (
-              <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
+              <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Creating...</>
             ) : (
-              '⚡ Send Quote'
+              '⚡ Create Quote'
             )}
           </Button>
         </form>

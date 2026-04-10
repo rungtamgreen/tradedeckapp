@@ -4,6 +4,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ export default function InvoicesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get('status');
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+  const { getInvoiceTemplateData } = useBusinessProfile();
 
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ['invoices', user?.id],
@@ -54,6 +56,7 @@ export default function InvoicesPage() {
       setPendingAction(`reminder-${invoice.id}`);
       const email = invoice.customers?.email;
       if (!email) throw new Error('Customer has no email address');
+      const bpData = getInvoiceTemplateData();
       const { error } = await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'invoice-reminder',
@@ -64,6 +67,7 @@ export default function InvoicesPage() {
             invoiceDescription: invoice.description,
             invoiceAmount: `£${Number(invoice.amount).toFixed(2)}`,
             dueDate: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined,
+            ...bpData,
           },
         },
       });
@@ -79,6 +83,7 @@ export default function InvoicesPage() {
       setPendingAction(`send-${invoice.id}`);
       const email = invoice.customers?.email;
       if (!email) throw new Error('Customer has no email address');
+      const bpData = getInvoiceTemplateData();
       const { error: fnError } = await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'invoice-send',
@@ -90,6 +95,7 @@ export default function InvoicesPage() {
             invoiceDescription: invoice.description,
             invoiceAmount: `£${Number(invoice.amount).toFixed(2)}`,
             dueDate: invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined,
+            ...bpData,
           },
         },
       });
