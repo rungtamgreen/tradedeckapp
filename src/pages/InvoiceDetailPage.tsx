@@ -6,10 +6,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
+import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, CheckCircle, Clock, Send, Pencil, X, Save, Loader2, Briefcase } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, Send, Pencil, X, Save, Loader2, Briefcase, Mail, CreditCard, FileText } from 'lucide-react';
 
 export default function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,7 @@ export default function InvoiceDetailPage() {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ description: '', amount: '' });
+  const { profile, buildPaymentDetailsString, getInvoiceTemplateData } = useBusinessProfile();
 
   const { data: invoice, isLoading } = useQuery({
     queryKey: ['invoice', id],
@@ -90,6 +92,7 @@ export default function InvoiceDetailPage() {
     mutationFn: async () => {
       const email = (invoice as any)?.customers?.email;
       if (!email) throw new Error('Customer has no email address');
+      const bpData = getInvoiceTemplateData();
       const { error } = await supabase.functions.invoke('send-transactional-email', {
         body: {
           templateName: 'invoice-reminder',
@@ -102,6 +105,7 @@ export default function InvoiceDetailPage() {
             dueDate: invoice?.due_date
               ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
               : undefined,
+            ...bpData,
           },
         },
       });
@@ -109,6 +113,40 @@ export default function InvoiceDetailPage() {
     },
     onSuccess: () => toast.success('Payment reminder sent'),
     onError: (err: any) => toast.error(err.message || 'Failed to send reminder'),
+  });
+
+  const sendInvoiceMutation = useMutation({
+    mutationFn: async () => {
+      const email = (invoice as any)?.customers?.email;
+      if (!email) throw new Error('Customer has no email address');
+      const bpData = getInvoiceTemplateData();
+      const { error: fnError } = await supabase.functions.invoke('send-transactional-email', {
+        body: {
+          templateName: 'invoice-send',
+          recipientEmail: email,
+          idempotencyKey: `invoice-send-${id}`,
+          templateData: {
+            customerName: (invoice as any)?.customers?.name,
+            invoiceNumber: invoice?.invoice_number,
+            invoiceDescription: invoice?.description,
+            invoiceAmount: `£${Number(invoice?.amount).toFixed(2)}`,
+            dueDate: invoice?.due_date
+              ? new Date(invoice.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+              : undefined,
+            ...bpData,
+          },
+        },
+      });
+      if (fnError) throw fnError;
+      const { error: updateError } = await supabase.from('invoices').update({ sent: true } as any).eq('id', id!);
+      if (updateError) throw updateError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoice', id] });
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      toast.success('Invoice sent to customer');
+    },
+    onError: (err: any) => toast.error(err.message || 'Failed to send invoice'),
   });
 
   const startEditing = () => {
@@ -134,6 +172,9 @@ export default function InvoiceDetailPage() {
   }
 
   const isPaid = invoice.status === 'paid';
+  const isSent = !!(invoice as any).sent;
+  const paymentDetailsStr = buildPaymentDetailsString();
+  const hasPaymentDetails = !!paymentDetailsStr;
 
   return (
     <AppLayout
@@ -224,6 +265,26 @@ export default function InvoiceDetailPage() {
               {invoice.invoice_number && (
                 <p className="text-xs text-muted-foreground">Ref: {invoice.invoice_number}</p>
               )}
+
+              {/* Payment Details */}
+              {hasPaymentDetails && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1 mb-1">
+                    <CreditCard className="h-3 w-3" /> Payment Details
+                  </p>
+                  <p className="text-xs text-muted-foreground">{paymentDetailsStr}</p>
+                </div>
+              )}
+
+              {/* Default Invoice Notes */}
+              {profile?.default_invoice_notes && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-xs font-semibold text-foreground flex items-center gap-1 mb-1">
+                    <FileText className="h-3 w-3" /> Notes
+                  </p>
+                  <p className="text-xs text-muted-foreground whitespace-pre-line">{profile.default_invoice_notes}</p>
+                </div>
+              )}
             </>
           )}
         </CardContent>
@@ -231,18 +292,33 @@ export default function InvoiceDetailPage() {
 
       {!editing && !isPaid && (
         <div className="space-y-3 mb-4">
-          <Button
-            size="lg"
-            className="w-full h-14 text-base bg-accent text-accent-foreground hover:bg-accent/90"
-            onClick={() => sendReminderMutation.mutate()}
-            disabled={sendReminderMutation.isPending}
-          >
-            {sendReminderMutation.isPending ? (
-              <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
-            ) : (
-              <><Send className="h-5 w-5 mr-2" /> Send Payment Reminder</>
-            )}
-          </Button>
+          {!isSent ? (
+            <Button
+              size="lg"
+              className="w-full h-14 text-base bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => sendInvoiceMutation.mutate()}
+              disabled={sendInvoiceMutation.isPending}
+            >
+              {sendInvoiceMutation.isPending ? (
+                <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
+              ) : (
+                <><Mail className="h-5 w-5 mr-2" /> Send Invoice</>
+              )}
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              className="w-full h-14 text-base bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => sendReminderMutation.mutate()}
+              disabled={sendReminderMutation.isPending}
+            >
+              {sendReminderMutation.isPending ? (
+                <><Loader2 className="h-5 w-5 animate-spin mr-2" /> Sending...</>
+              ) : (
+                <><Send className="h-5 w-5 mr-2" /> Send Payment Reminder</>
+              )}
+            </Button>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <Button size="lg" className="h-14 text-base" onClick={startEditing}>
               <Pencil className="h-5 w-5 mr-2" /> Edit
@@ -268,7 +344,10 @@ export default function InvoiceDetailPage() {
       )}
 
       {linkedJob && (
-        <Card>
+        <Card
+          className="cursor-pointer active:bg-muted/50"
+          onClick={() => navigate(`/jobs/${linkedJob.id}`)}
+        >
           <CardContent className="p-4">
             <p className="text-sm font-medium text-muted-foreground mb-1">Linked Job</p>
             <div className="flex items-center justify-between">
