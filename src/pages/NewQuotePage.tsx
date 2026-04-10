@@ -17,10 +17,11 @@ export default function NewQuotePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const autoVoice = searchParams.get('voice') === '1';
+  const preselectedCustomer = searchParams.get('customer') || '';
   const { user } = useAuth();
   const { plan } = useSubscription();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState({ customer_id: '', description: '', price: '' });
+  const [form, setForm] = useState({ customer_id: preselectedCustomer, description: '', price: '', expires_at: '' });
   const [isParsing, setIsParsing] = useState(false);
   const quotesLimit = PLANS[plan].quotesPerMonth;
 
@@ -67,7 +68,6 @@ export default function NewQuotePage() {
 
       if (error) throw error;
 
-      // Match customer name to ID
       if (data.customer_name) {
         const match = customers.find((c: any) =>
           c.name.toLowerCase().includes(data.customer_name.toLowerCase()) ||
@@ -94,12 +94,10 @@ export default function NewQuotePage() {
 
   const { isListening, transcript, startListening, stopListening, error: voiceError, supported } = useVoiceCommand(handleVoiceResult);
 
-  // Auto-start voice when arriving from dashboard Voice Quote button
   const [autoStarted, setAutoStarted] = useState(false);
   useEffect(() => {
     if (autoVoice && supported && !autoStarted && customers.length >= 0) {
       setAutoStarted(true);
-      // Small delay to let the page render
       const t = setTimeout(() => startListening(), 500);
       return () => clearTimeout(t);
     }
@@ -107,20 +105,22 @@ export default function NewQuotePage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from('quotes').insert({
+      const { data, error } = await supabase.from('quotes').insert({
         user_id: user!.id,
         customer_id: form.customer_id,
         description: form.description,
         price: parseFloat(form.price),
+        expires_at: form.expires_at || null,
         status: 'pending',
-      });
+      }).select('id').single();
       if (error) throw error;
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       toast.success('Quote created!');
-      navigate('/quotes');
+      navigate(`/quotes/${data.id}`);
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -148,7 +148,6 @@ export default function NewQuotePage() {
         {quotesLimit !== Infinity && (
           <p className="text-xs text-muted-foreground text-center">{quotesThisMonth} of {quotesLimit} quotes used this month</p>
         )}
-        {/* Voice Input */}
         {supported && (
           <button
             type="button"
@@ -163,20 +162,11 @@ export default function NewQuotePage() {
             }`}
           >
             {isParsing ? (
-              <>
-                <Loader2 className="h-6 w-6 animate-spin" />
-                Parsing...
-              </>
+              <><Loader2 className="h-6 w-6 animate-spin" /> Parsing...</>
             ) : isListening ? (
-              <>
-                <MicOff className="h-6 w-6" />
-                Tap to Stop
-              </>
+              <><MicOff className="h-6 w-6" /> Tap to Stop</>
             ) : (
-              <>
-                <Mic className="h-6 w-6" />
-                🎤 Voice Quote
-              </>
+              <><Mic className="h-6 w-6" /> 🎤 Voice Quote</>
             )}
           </button>
         )}
@@ -230,6 +220,15 @@ export default function NewQuotePage() {
             className="h-12 text-base"
             required
           />
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1 block">Quote valid until (optional)</label>
+            <Input
+              type="date"
+              value={form.expires_at}
+              onChange={e => setForm(f => ({ ...f, expires_at: e.target.value }))}
+              className="h-12 text-base"
+            />
+          </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-accent text-accent-foreground hover:bg-accent/90" disabled={mutation.isPending}>
             {mutation.isPending ? 'Creating...' : '⚡ Send Quote'}
           </Button>

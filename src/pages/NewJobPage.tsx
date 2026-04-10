@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,9 @@ export default function NewJobPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState({ customer_id: '', description: '', price: '', scheduled_date: '' });
+  const [searchParams] = useSearchParams();
+  const preselectedCustomer = searchParams.get('customer') || '';
+  const [form, setForm] = useState({ customer_id: preselectedCustomer, description: '', price: '', scheduled_date: '', notes: '' });
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers', user?.id],
@@ -34,6 +36,7 @@ export default function NewJobPage() {
         description: form.description,
         price: parseFloat(form.price),
         scheduled_date: form.scheduled_date || null,
+        notes: form.notes || null,
         status: 'scheduled',
       });
       if (error) throw error;
@@ -59,7 +62,11 @@ export default function NewJobPage() {
         </select>
         <Textarea placeholder="Job description *" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} className="text-base min-h-[100px]" required />
         <Input placeholder="Price (£) *" type="number" step="0.01" min="0" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className="h-12 text-base" required />
-        <Input type="date" value={form.scheduled_date} onChange={e => setForm(f => ({ ...f, scheduled_date: e.target.value }))} className="h-12 text-base" />
+        <Textarea placeholder="Job notes (optional)" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} className="text-base min-h-[80px]" />
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">Scheduled Date (optional)</label>
+          <Input type="date" value={form.scheduled_date} onChange={e => setForm(f => ({ ...f, scheduled_date: e.target.value }))} className="h-12 text-base" />
+        </div>
         <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
           {mutation.isPending ? 'Creating...' : 'Create Job'}
         </Button>

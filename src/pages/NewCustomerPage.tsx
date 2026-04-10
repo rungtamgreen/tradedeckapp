@@ -17,7 +17,7 @@ export default function NewCustomerPage() {
   const { user } = useAuth();
   const { plan } = useSubscription();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '' });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', address: '', postcode: '' });
   const limit = PLANS[plan].customers;
 
   const { data: customerCount = 0 } = useQuery({
@@ -40,6 +40,7 @@ export default function NewCustomerPage() {
         phone: form.phone || null,
         email: form.email || null,
         address: form.address || null,
+        postcode: form.postcode || null,
       });
       if (error) throw error;
     },
@@ -81,6 +82,7 @@ export default function NewCustomerPage() {
           <Input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="h-12 text-base" />
           <Input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="h-12 text-base" />
           <Textarea placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} className="text-base min-h-[80px]" />
+          <Input placeholder="Postcode (optional)" value={form.postcode} onChange={e => setForm(f => ({ ...f, postcode: e.target.value }))} className="h-12 text-base" />
           <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={mutation.isPending}>
             {mutation.isPending ? 'Saving...' : 'Save Customer'}
           </Button>

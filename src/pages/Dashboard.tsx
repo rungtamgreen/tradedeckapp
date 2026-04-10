@@ -123,7 +123,7 @@ export default function Dashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           <StatCard label="Unpaid Invoices" value={stats?.unpaidInvoices ?? 0} icon={<Receipt className="h-5 w-5" />} color="destructive" to="/invoices?status=unpaid" />
-          <StatCard label="Outstanding" value={`£${stats?.outstanding?.toFixed(0) ?? 0}`} icon={<FileText className="h-5 w-5" />} color="primary" to="/invoices?status=unpaid" />
+          <StatCard label="Outstanding" value={`£${stats?.outstanding?.toFixed(2) ?? '0.00'}`} icon={<FileText className="h-5 w-5" />} color="primary" to="/invoices?status=unpaid" />
           <StatCard label="Pending Quotes" value={stats?.pendingQuotes ?? 0} icon={<Clock className="h-5 w-5" />} color="accent" to="/quotes?status=pending" />
           <StatCard label="Active Jobs" value={stats?.activeJobs ?? 0} icon={<Wrench className="h-5 w-5" />} color="success" to="/jobs?status=active" />
         </div>
