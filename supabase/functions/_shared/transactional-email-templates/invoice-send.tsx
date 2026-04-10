@@ -8,9 +8,11 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
+  Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -23,6 +25,12 @@ interface InvoiceSendProps {
   invoiceAmount?: string
   dueDate?: string
   paymentDetails?: string
+  businessName?: string
+  businessAddress?: string
+  businessPhone?: string
+  businessLogo?: string
+  defaultInvoiceNotes?: string
+  vatNumber?: string
 }
 
 const InvoiceSendEmail = ({
@@ -32,16 +40,26 @@ const InvoiceSendEmail = ({
   invoiceAmount,
   dueDate,
   paymentDetails,
+  businessName,
+  businessAddress,
+  businessPhone,
+  businessLogo,
+  defaultInvoiceNotes,
+  vatNumber,
 }: InvoiceSendProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Invoice {invoiceNumber || ''} from {SITE_NAME}</Preview>
+    <Preview>Invoice {invoiceNumber || ''} from {businessName || SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <div style={logoBadge}>
-            <span style={logoText}>JD</span>
-          </div>
+          {businessLogo ? (
+            <Img src={businessLogo} alt={businessName || SITE_NAME} width="80" height="80" style={{ borderRadius: '12px', objectFit: 'contain' as any }} />
+          ) : (
+            <div style={logoBadge}>
+              <span style={logoText}>JD</span>
+            </div>
+          )}
         </Section>
         <Heading style={h1}>
           {customerName ? `Hi ${customerName},` : 'Hi there,'}
@@ -64,6 +82,11 @@ const InvoiceSendEmail = ({
             <strong>Amount due:</strong> {invoiceAmount}
           </Text>
         )}
+        {vatNumber && (
+          <Text style={text}>
+            <strong>VAT No:</strong> {vatNumber}
+          </Text>
+        )}
         {dueDate && (
           <Text style={text}>
             <strong>Due date:</strong> {dueDate}
@@ -82,6 +105,24 @@ const InvoiceSendEmail = ({
         <Text style={text}>
           If you have any questions about this invoice, please reply directly to the sender.
         </Text>
+        {defaultInvoiceNotes && (
+          <>
+            <Hr style={{ borderColor: '#e5e7eb', margin: '24px 0' }} />
+            <Text style={{ ...text, fontSize: '12px', color: '#777' }}>
+              {defaultInvoiceNotes}
+            </Text>
+          </>
+        )}
+        {(businessName || businessPhone || businessAddress) && (
+          <>
+            <Hr style={{ borderColor: '#e5e7eb', margin: '24px 0' }} />
+            <Text style={{ ...text, fontSize: '12px', color: '#777', margin: '0 0 4px' }}>
+              {businessName && <>{businessName}<br /></>}
+              {businessPhone && <>{businessPhone}<br /></>}
+              {businessAddress && <>{businessAddress}</>}
+            </Text>
+          </>
+        )}
         <Text style={footer}>
           This invoice was sent via {SITE_NAME}.
         </Text>
@@ -94,8 +135,8 @@ export const template = {
   component: InvoiceSendEmail,
   subject: (data: Record<string, any>) =>
     data.invoiceNumber
-      ? `Invoice ${data.invoiceNumber} from JobDeck`
-      : 'Your invoice from JobDeck',
+      ? `Invoice ${data.invoiceNumber} from ${data.businessName || 'JobDeck'}`
+      : `Your invoice from ${data.businessName || 'JobDeck'}`,
   displayName: 'Invoice send',
   previewData: {
     customerName: 'Jane',
@@ -103,7 +144,10 @@ export const template = {
     invoiceDescription: 'Bathroom renovation — labour and materials',
     invoiceAmount: '£1,800.00',
     dueDate: '15 January 2025',
-    paymentDetails: 'Sort code: 12-34-56\nAccount: 12345678',
+    paymentDetails: 'Bank: Barclays | Account: J Smith | Acc No: 12345678 | Sort: 12-34-56',
+    businessName: 'Smith Plumbing',
+    businessPhone: '07700 900000',
+    defaultInvoiceNotes: 'Please pay within 14 days.',
   },
 } satisfies TemplateEntry
 

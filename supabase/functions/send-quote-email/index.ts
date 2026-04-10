@@ -12,7 +12,6 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify auth
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -74,11 +73,52 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Fetch business profile
+    const { data: profile } = await supabase
+      .from("business_profiles")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const bp = profile || {};
+
+    // Build logo URL if exists
+    let businessLogo = '';
+    if (bp.logo_url) {
+      businessLogo = bp.logo_url;
+    }
+
+    // Format expiry date
+    let expiryDate = '';
+    if (quote.expires_at) {
+      expiryDate = new Date(quote.expires_at).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric',
+      });
+    }
+
     // Build accept URL
     const origin = req.headers.get("origin") || "https://jobdeck.app";
     const acceptUrl = `${origin}/accept-quote?token=${quote.accept_token}`;
 
-    // Send via the transactional email system (queue-based with retries)
+    // Build template data
+    const templateData: Record<string, any> = {
+      customerName: quote.customers.name,
+      quoteDescription: quote.description,
+      quoteAmount: `£${Number(quote.price).toFixed(2)}`,
+      viewQuoteUrl: acceptUrl,
+      businessName: bp.business_name || '',
+      businessAddress: bp.address || '',
+      businessPhone: bp.phone || '',
+      businessEmail: bp.email || '',
+      businessLogo,
+      defaultQuoteNotes: bp.default_quote_notes || '',
+      expiryDate,
+    };
+    if (bp.vat_number) {
+      templateData.vatNumber = bp.vat_number;
+    }
+
+    // Send quote email to customer
     const { error: invokeError } = await supabase.functions.invoke(
       "send-transactional-email",
       {
@@ -86,12 +126,7 @@ Deno.serve(async (req) => {
           templateName: "quote-confirmation",
           recipientEmail: customerEmail,
           idempotencyKey: `quote-confirm-${quoteId}`,
-          templateData: {
-            customerName: quote.customers.name,
-            quoteDescription: quote.description,
-            quoteAmount: `£${Number(quote.price).toFixed(2)}`,
-            viewQuoteUrl: acceptUrl,
-          },
+          templateData,
         },
       }
     );
@@ -102,6 +137,27 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: "Failed to send email" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Notify tradesperson if preference is on
+    if (bp.notify_quote_accepted !== false) {
+      // Get auth user email as fallback
+      const { data: authUser } = await supabase.auth.admin.getUserById(userId);
+      const tradeEmail = bp.email || authUser?.user?.email;
+      if (tradeEmail) {
+        await supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "quote-sent-notification",
+            recipientEmail: tradeEmail,
+            idempotencyKey: `quote-sent-notif-${quoteId}`,
+            templateData: {
+              customerName: quote.customers.name,
+              quoteDescription: quote.description,
+              quoteAmount: `£${Number(quote.price).toFixed(2)}`,
+            },
+          },
+        });
+      }
     }
 
     return new Response(
