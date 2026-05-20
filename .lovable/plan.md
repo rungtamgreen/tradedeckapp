@@ -1,33 +1,41 @@
 
+Goal: stop the app from intermittently showing an older UI. The current source code still contains your latest dashboard/settings changes, so this does not look like a real revert — it looks like stale frontend assets being served.
 
-# Add Invoice Reminder Email Template
+What I found:
+- `src/pages/Dashboard.tsx` still has the clickable stat cards, “Today’s Overview”, and the 5 quick action buttons.
+- `src/components/StatCard.tsx` still wraps cards in a clickable button with `navigate(...)`.
+- `src/pages/SettingsPage.tsx` still has the moved “Current Plan” section.
+- `vite.config.ts` has `VitePWA(...)` enabled globally.
+- `src/main.tsx` has no explicit service worker update/reload handling.
+- `src/pages/InstallPage.tsx` confirms the app is intended to be installable, which increases the chance of stale cached bundles if updates are not handled cleanly.
 
-## Summary
-Create a branded invoice reminder email template and add a "Send Reminder" button to unpaid invoices, allowing users to nudge customers for payment.
+Most likely cause:
+- A cached service worker / PWA bundle is sometimes serving an older app shell, especially after updates.
+- That would explain why logging back in or forcing a reload makes the latest layout appear again.
 
-## What gets built
+Implementation plan:
+1. Add explicit app update handling
+   - Register the PWA update flow in `src/main.tsx`.
+   - Detect when a new version is available and force/apply the update cleanly instead of leaving the app on an older bundle.
 
-1. **New email template** — `invoice-reminder.tsx` in `_shared/transactional-email-templates/`, matching the existing JobDeck blue brand styling. Shows customer name, invoice description, amount due, and due date (if set).
+2. Prevent stale preview sessions
+   - Adjust the PWA setup in `vite.config.ts` so the preview/development experience does not keep serving old cached UI during active iteration.
+   - Keep installability for the live app, but make preview safer and less sticky.
 
-2. **Registry update** — Add the new template to `registry.ts` so the send system recognises it.
+3. Clear already-bad caches
+   - Ship a one-time cache-clearing strategy if needed so users who already have the stale worker installed get moved onto the latest version.
+   - This is the safest way to stop the “old layout came back” issue from recurring.
 
-3. **"Send Reminder" button on InvoicesPage** — For each unpaid invoice, add a button that calls `send-transactional-email` with the `invoice-reminder` template. Uses idempotency key `invoice-reminder-{invoiceId}` to prevent accidental duplicate sends within a short window. The button fetches the customer's email before sending and shows a toast on success/failure.
+4. Add a visible refresh path
+   - Show a small toast/banner when a new version is ready, with a “Reload” action.
+   - That gives users a clear way to update without needing to log out and back in.
 
-4. **Deploy** — Redeploy `send-transactional-email` and `preview-transactional-email` so the new template is live.
+5. Re-verify the affected UI after the cache fix
+   - Confirm the dashboard always shows the latest tappable cards and quick actions.
+   - Confirm Settings still shows the moved “Current Plan” section.
+   - Confirm both browser and installed-app flows stay on the latest layout consistently.
 
-## Files to create/edit
-
-| File | Action |
-|------|--------|
-| `supabase/functions/_shared/transactional-email-templates/invoice-reminder.tsx` | Create — branded template with amount, description, optional due date |
-| `supabase/functions/_shared/transactional-email-templates/registry.ts` | Edit — import and register `invoice-reminder` |
-| `src/pages/InvoicesPage.tsx` | Edit — add "Send Reminder" button for unpaid invoices with email sending logic |
-
-## Technical details
-
-- Template props: `customerName`, `invoiceDescription`, `invoiceAmount`, `dueDate` (all optional with graceful fallbacks)
-- Subject line: `"Payment reminder from JobDeck"`
-- Idempotency: `invoice-reminder-{invoiceId}-{Date.now()}` — allows re-sending reminders on different days
-- The invoices query already joins `customers(name)` — will expand to `customers(name, email)` to get the recipient address
-- No new database tables or migrations needed
-
+Technical details:
+- Likely files: `vite.config.ts`, `src/main.tsx`, and possibly a tiny update toast/helper component.
+- No database changes are needed for this fix.
+- I would not revert any UI work; I would fix the asset caching/update behavior so your latest changes always load.
