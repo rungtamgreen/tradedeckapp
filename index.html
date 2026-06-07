@@ -15,10 +15,48 @@
 
     <link rel="icon" href="/favicon.ico" />
 
-    <meta property="og:title" content="JobDeck - Job Management" />
-    <meta property="og:description" content="Fast job management for tradespeople." />
+    <!-- Sitewide social fallback (per-route Helmet replaces these for JS crawlers) -->
+    <meta property="og:title" content="JobDeck — Job Management for Tradespeople" />
+    <meta property="og:description" content="Run your trade business without the paperwork. Create quotes, track jobs, and send invoices in seconds from your phone." />
+    <meta property="og:url" content="https://jobdeck.app/" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JobDeck" />
     <meta name="twitter:card" content="summary" />
+
+    <!-- Sitewide structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "JobDeck",
+        "url": "https://jobdeck.app/",
+        "logo": "https://jobdeck.app/pwa-icon-512.png"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "JobDeck",
+        "url": "https://jobdeck.app/"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "JobDeck",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, iOS, Android",
+        "description": "Mobile-first job management for tradespeople — create quotes, track jobs, and send invoices in seconds.",
+        "url": "https://jobdeck.app/",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "GBP"
+        }
+      }
+    </script>
   </head>
 
   <body>

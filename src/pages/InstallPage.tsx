@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Download, CheckCircle, Share, ArrowLeft } from 'lucide-react';
+import { SeoHead } from '@/components/SeoHead';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -46,7 +47,12 @@ export default function InstallPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
-      <button onClick={() => navigate('/')} className="absolute top-4 left-4 p-2 touch-target">
+      <SeoHead
+        title="Install JobDeck — Add to Home Screen"
+        description="Add JobDeck to your phone's home screen for instant access. Works on iOS, Android, and desktop browsers."
+        path="/install"
+      />
+      <button onClick={() => navigate('/')} className="absolute top-4 left-4 p-2 touch-target" aria-label="Back to home">
         <ArrowLeft className="h-6 w-6 text-foreground" />
       </button>
 

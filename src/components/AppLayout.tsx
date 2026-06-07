@@ -18,7 +18,7 @@ export function AppLayout({ children, title, action, back }: AppLayoutProps) {
       <header className="sticky top-0 z-40 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-1">
           {back && (
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="touch-target -ml-2">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="touch-target -ml-2" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}

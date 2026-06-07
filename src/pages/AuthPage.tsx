@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Wrench } from 'lucide-react';
+import { SeoHead } from '@/components/SeoHead';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -34,12 +35,19 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+      <SeoHead
+        title="JobDeck — Sign In or Create Account"
+        description="Sign in to JobDeck or create a free account to start sending quotes, tracking jobs, and getting paid faster."
+        path="/auth"
+        noindex
+      />
+      <h1 className="sr-only">JobDeck — Sign In or Create Account</h1>
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-primary-foreground mb-4">
             <Wrench className="h-8 w-8" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">JobDeck</h1>
+          <p className="text-2xl font-bold text-foreground">JobDeck</p>
           <p className="text-muted-foreground text-sm">Quotes, jobs & invoices — fast.</p>
         </div>
 
