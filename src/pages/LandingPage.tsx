@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { SeoHead } from '@/components/SeoHead';
 import {
   Zap,
   ClipboardList,
@@ -66,6 +67,11 @@ const steps = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <SeoHead
+        title="JobDeck — Quotes, Jobs & Invoices for Tradespeople"
+        description="Run your trade business without the paperwork. Create quotes, track jobs, and send invoices in seconds from your phone."
+        path="/"
+      />
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">

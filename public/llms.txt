@@ -1,0 +1,12 @@
+# JobDeck
+
+> Mobile-first job management for tradespeople — create quotes, track jobs, and send invoices in seconds from your phone.
+
+JobDeck helps plumbers, electricians, builders, and other tradespeople run their business without the paperwork. Features include fast quote creation (including voice input), job tracking, and one-tap invoicing. UK-focused with £ currency and 20% VAT defaults. Free and Pro plans available.
+
+## Pages
+
+- [Home](/): Overview of JobDeck features, how it works, and pricing.
+- [Pricing](/pricing): Free and Pro plan comparison.
+- [Install](/install): Add JobDeck to your phone's home screen as a PWA.
+- [Sign in or create account](/auth): Access your JobDeck account.

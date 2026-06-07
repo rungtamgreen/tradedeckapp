@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ArrowLeft, Check, Crown, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { SeoHead } from '@/components/SeoHead';
 
 export default function PricingPage() {
   const navigate = useNavigate();
@@ -52,11 +53,16 @@ export default function PricingPage() {
     <AppLayout
       title="Plans"
       action={
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="touch-target">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="touch-target" aria-label="Back">
           <ArrowLeft className="h-5 w-5" />
         </Button>
       }
     >
+      <SeoHead
+        title="JobDeck Pricing — Free and Pro Plans"
+        description="Simple, honest pricing for tradespeople. Start free with up to 5 quotes a month, or upgrade to Pro for unlimited quotes, jobs, and invoices."
+        path="/pricing"
+      />
       <div className="space-y-4">
         {/* Free Plan */}
         <div className={`rounded-2xl border-2 p-5 space-y-4 ${plan === 'free' ? 'border-primary bg-primary/5' : 'border-border'}`}>

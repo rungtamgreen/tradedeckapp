@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Wrench } from "lucide-react";
+import { SeoHead } from "@/components/SeoHead";
 
 type Status = "loading" | "valid" | "already_unsubscribed" | "invalid" | "success" | "error";
 
@@ -59,11 +60,18 @@ const UnsubscribePage = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SeoHead
+        title="JobDeck — Email Unsubscribe"
+        description="Unsubscribe from JobDeck notification emails."
+        path="/unsubscribe"
+        noindex
+      />
+      <h1 className="sr-only">JobDeck — Email Unsubscribe</h1>
       <div className="max-w-md w-full text-center space-y-6">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary text-primary-foreground">
           <Wrench className="h-6 w-6" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">JobDeck</h1>
+        <p className="text-2xl font-bold text-foreground">JobDeck</p>
 
         {status === "loading" && (
           <p className="text-muted-foreground">Verifying your request…</p>
